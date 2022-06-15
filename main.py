@@ -38,5 +38,10 @@ with open(input_parameters, "r") as read_file:
     # create rewards Object
 
 # for template in params["reports"]:
-    # create list of necessary
-    notebookbuilder.build()
+    # create list of necessary inputs
+    # notebookbuilder.build()
+
+# for export in params["exports"]
+    # run export
+
+# move files to destination folder and clean up

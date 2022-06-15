@@ -47,6 +47,8 @@ def build(_templateName, _data):
     papermill_cell.metadata.tags = ["parameters"]
     nb["cells"].append(papermill_cell)
 
+    # generate cell with imports (specially the analysis module)
+
     # append header
     for cell in header['cells']:
         # print(cell)
