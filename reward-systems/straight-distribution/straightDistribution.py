@@ -1,7 +1,7 @@
 # distribution where everybody gets the same (eg. rewardboard)
 import pandas as pd
 
-from processing.rewardSystem import RewardSystem
+from src.rewardSystem import RewardSystem
 
 
 class StraightDistribution(RewardSystem):
