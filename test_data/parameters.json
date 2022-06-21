@@ -1,0 +1,24 @@
+{
+  "distribution_name": "round-test",
+  "results_output_folder": "distribution_results",
+  "rewards": {
+    "rewardboard": {
+      "type": "straight_distribution",
+      "distribution_amount": "1000",
+      "input_files": {
+        "benficiary_list": "rewardboard.csv"
+      },
+      "payout_token": {
+        "token_name": "TEC",
+        "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
+      }
+    }
+  },
+  "reports": {
+    "histogram": {
+      "system": "straight_distribution",
+      "name": "rewardboard-histogram",
+      "sources": ["straight_distribution"]
+    }
+  }
+}

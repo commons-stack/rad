@@ -13,11 +13,13 @@
 #   -cleans up
 
 
+import argparse
 import pandas as pd
 import numpy as np
 import json
 
-import argparse
+import reward_systems.rewardObjectBuilder as objBuilder
+import src.notebookbuilder as nbBuilder
 
 
 parser = argparse.ArgumentParser(
@@ -33,13 +35,26 @@ params = {}
 with open(input_parameters, "r") as read_file:
     params = json.load(read_file)
 
-
-# for reward_system in params["reward_systems"]
+rewardsystem_objects = {}
+for reward_system in params["rewards"]:
     # create rewards Object
+    rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
+        params["rewards"][reward_system]["type"], params["rewards"][reward_system])
+    print(rewardsystem_objects[reward_system])
+
 
 # for template in params["reports"]:
-    # create list of necessary inputs
-    # notebookbuilder.build()
+for template in params["reports"]:
+    # create template path (for builder to find it)
+    path_to_template = "./reward_systems/" + \
+        params["reports"][template]["system"] + "/reports/" + \
+        params["reports"][template]["name"] + "/"
+    # create list of necessary inputs (it will receive all necessary praise objects as input)
+    _data = {}
+    for source_system in params["reports"][template]["sources"]:
+        _data[source_system] = rewardsystem_objects[source_system]
+    nbBuilder.build_and_run(path_to_template, _data)
+
 
 # for export in params["exports"]
     # run export
