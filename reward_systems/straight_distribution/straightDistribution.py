@@ -9,7 +9,7 @@ class StraightDistribution(RewardSystem):
     def __init__(self, _beneficiaries, _distAmount, _tokenName, _tokenAddress) -> None:
         super().__init__("praise")
         self.beneficiaries = _beneficiaries
-        self.totalDistAmount = _distAmount
+        self.totalDistAmount = int(_distAmount)
         self.tokenName = _tokenName
         self.tokenAddress = _tokenAddress
         self.distributionResults = pd.DataFrame()
@@ -31,5 +31,5 @@ class StraightDistribution(RewardSystem):
         self.distributionResults['AMOUNT TO RECEIVE'] = self.totalDistAmount / \
             len(self.distributionResults.index)
 
-    def get_distribution_results(this) -> pd.DataFrame:
-        return this.distributionResults
+    def get_distribution_results(self) -> pd.DataFrame:
+        return self.distributionResults

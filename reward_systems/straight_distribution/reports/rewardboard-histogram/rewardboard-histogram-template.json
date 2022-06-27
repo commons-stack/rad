@@ -1,8 +1,0 @@
-{
-  "name": "Rewardboard Histogram",
-  "sources": {
-    "header": "./header.ipynb",
-    "footer": "./footer.ipynb"
-  },
-  "analysis": ["histogram"]
-}

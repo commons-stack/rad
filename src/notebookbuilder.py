@@ -20,6 +20,7 @@
 
 from sys import path
 import nbformat as nbf
+import importlib
 import json
 
 
@@ -27,16 +28,13 @@ def build_and_run(_templateName, _data):
 
     nb = nbf.v4.new_notebook()
 
-    path_to_report = "./reward-systems/" + \
-        _data.name + "/reports/" + _templateName + "/"
+    path_to_report = "./reports/" + _templateName + "/"
 
-    path_to_templates = "./reward-systems/" + \
-        _data.name + "/utils/templates/"
-
-    parameters_path = path_to_report + _templateName + "-template.json"
+    parameters_path = path_to_report + _templateName + ".json"
     parameters = {}
     with open(parameters_path, "r") as read_file:
         parameters = json.load(read_file)
+
 
     imports = nbf.read(
         str(path_to_report + parameters["sources"]["imports"]), as_version=4)
@@ -63,21 +61,10 @@ def build_and_run(_templateName, _data):
 
     # generate cell with imports (specially the analysis module)
     nb = append_cell_set(nb, imports)
-    # for cell in imports['cells']:
-    #     # print(cell)
-    #     if cell['cell_type'] == 'code':
-    #         nb['cells'].append(nbf.v4.new_code_cell(cell['source']))
-    #     elif cell['cell_type'] == 'markdown':
-    #         nb['cells'].append(nbf.v4.new_markdown_cell(cell['source']))
-
+  
     # append header
     nb = append_cell_set(nb, header)
-    # for cell in header['cells']:
-    #     # print(cell)
-    #     if cell['cell_type'] == 'code':
-    #         nb['cells'].append(nbf.v4.new_code_cell(cell['source']))
-    #     elif cell['cell_type'] == 'markdown':
-    #         nb['cells'].append(nbf.v4.new_markdown_cell(cell['source']))
+  
 
     # here we go call the cellbuilder for analysis
     for analysis in analysis_list:
@@ -86,21 +73,10 @@ def build_and_run(_templateName, _data):
 
         template = nbf.read(template_path, as_version=4)
         nb = append_cell_set(nb, template)
-        # for cell in template:
-        #     # print(cell)
-        #     if cell['cell_type'] == 'code':
-        #         nb['cells'].append(nbf.v4.new_code_cell(cell['source']))
-        #     elif cell['cell_type'] == 'markdown':
-        #         nb['cells'].append(nbf.v4.new_markdown_cell(cell['source']))
+
 
     # append footer
     nb = append_cell_set(nb, footer)
-    # for cell in footer['cells']:
-    #     # print(cell)
-    #     if cell['cell_type'] == 'code':
-    #         nb['cells'].append(nbf.v4.new_code_cell(cell['source']))
-    #     elif cell['cell_type'] == 'markdown':
-    #         nb['cells'].append(nbf.v4.new_markdown_cell(cell['source']))
 
     fname = 'test_output.ipynb'
 
@@ -111,6 +87,9 @@ def build_and_run(_templateName, _data):
 
 
 def append_cell_set(_originalCells, _append):
+    
+    #There must be a native wa to do this in a generalized way
+
     newSet = _originalCells
     for cell in _append['cells']:
         # print(cell)
@@ -120,3 +99,41 @@ def append_cell_set(_originalCells, _append):
             newSet['cells'].append(nbf.v4.new_markdown_cell(cell['source']))
 
     return newSet
+
+
+# MOVED FROM NOTEBOOK CELL-BUILDER.PY 
+
+#   receives:
+#       - the JSON of an analysis step
+#   returns:
+#       - a set of jupyter notebook cell objects, which a markdown text introduction to the analysis step, the execution  of the analysis and relevant visualization instruction
+#
+#   execution:
+#        - import the function based on the JSON data 
+#        - generate cell objects
+#        - return them
+
+def build_cells(_name):
+    output_cells = []
+    #import library from the relevant folder
+
+    #create markdown cell with Header
+    #create markdown cell with description
+    #create code cell that runs the print function (or just create cell with the results of the print func?) 
+
+    #return set of cells
+    return output_cells
+
+    # CODE FROM KRISTOFER
+    #     import importlib
+    # modnames = [
+    #   "sources.praise.analysis.modules.giverTotalScore", 
+    #   "sources.praise.analysis.modules.giverTotalScore2"
+    # ]
+    # modlist = []
+    # for lib in modnames:
+    #   mod = importlib.import_module(lib)
+    #   print(mod.header)
+    #   print(mod.description)
+    #   mod.run(praise_distribution)
+

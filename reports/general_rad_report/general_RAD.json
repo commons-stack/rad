@@ -1,0 +1,9 @@
+{
+  "name": "General RAD report",
+  "sources": {
+    "header": "./header.ipynb",
+    "footer": "./footer.ipynb",
+    "imports": "./imports.ipynb"
+  },
+  "analysis": ["histogram", "distribution", "praise_flows"]
+}

@@ -1,8 +1,0 @@
-{
-  "name": "general-rad-report",
-  "sources": {
-    "header": "header.ipynb",
-    "footer": "footer.ipynb"
-  },
-  "analysis": ["top10", "histogram"]
-}

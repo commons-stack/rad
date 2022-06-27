@@ -1,0 +1,14 @@
+{
+  "name": "General RAD report",
+  "sources": {
+    "header": "./header.ipynb",
+    "footer": "./footer.ipynb",
+    "imports": "./imports.ipynb"
+  },
+  "analysis": {
+    "histogram": {
+      "type": "histogram",
+      "source": "straight_distribution"
+    }
+  }
+}

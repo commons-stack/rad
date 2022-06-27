@@ -1,1 +1,1 @@
-#from . import StraightDistribution
+from .straightDistribution import StraightDistribution

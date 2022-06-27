@@ -6,7 +6,7 @@
       "type": "straight_distribution",
       "distribution_amount": "1000",
       "input_files": {
-        "benficiary_list": "rewardboard.csv"
+        "beneficiary_list": "rewardboard.csv"
       },
       "payout_token": {
         "token_name": "TEC",
@@ -15,10 +15,10 @@
     }
   },
   "reports": {
-    "histogram": {
+    "rewardboard_histogram": {
       "system": "straight_distribution",
       "name": "rewardboard-histogram",
-      "sources": ["straight_distribution"]
+      "sources": ["rewardboard"]
     }
   }
 }

@@ -1,8 +1,7 @@
 #from . import *
-#from .straight_distribution import StraightDistribution
+from .straight_distribution import *
 #from .straight_distribution import StraightDistribution
 #from .sourcecred import Sourcecred
-import StraightDistribution
 
 import pandas as pd
 

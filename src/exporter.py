@@ -1,0 +1,1 @@
+#Runs through the JSON as calls all export functions, combines stuff when necessary and saves it. Moves stuff at the end if necessary 
