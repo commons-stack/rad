@@ -22,6 +22,7 @@ from sys import path
 import nbformat as nbf
 import importlib
 import json
+import papermill as pm
 
 
 def build_and_run(_templateName, _data):
@@ -43,18 +44,7 @@ def build_and_run(_templateName, _data):
     footer = nbf.read(
         str(path_to_report + parameters["sources"]["footer"]), as_version=4)
 
-    # prepare giant papermill input list:
-    papermill_input = {}
-    papermill_input["_data"] = _data
-
-    analysis_list = {}
-    #   for each analysis in parameters["analysis"]
-    for analysis in parameters["analysis"]:
-        #       create a list with the required raw input and save under the analysis name
-        analysis_list[analysis["name"]] = {
-            "template": analysis["template"], "parameters": analysis["parameters"]}
-
-    # prepare papermill inputs cell
+     # prepare papermill inputs cell
     papermill_cell = nbf.v4.new_code_cell("input_params= {}")
     papermill_cell.metadata.tags = ["parameters"]
     nb["cells"].append(papermill_cell)
@@ -66,13 +56,47 @@ def build_and_run(_templateName, _data):
     nb = append_cell_set(nb, header)
   
 
-    # here we go call the cellbuilder for analysis
-    for analysis in analysis_list:
-        papermill_input[analysis["name"]] = analysis["parameters"]
-        template_path = path_to_templates + analysis["template"]
 
-        template = nbf.read(template_path, as_version=4)
-        nb = append_cell_set(nb, template)
+    # prepare giant papermill input list:
+    papermill_input = {}
+    papermill_input["_data"] = _data
+
+
+    #   for each analysis in parameters["analysis"]
+    for analysis in parameters["analysis"]:
+        #       create a list with the required raw input and save under the analysis name
+        #REDO 
+
+        #generate module path
+        module_path = "reward_systems." + parameters["analysis"][analysis]["reward_system"] + ".analysis_tools." + parameters["analysis"][analysis]["type"]
+
+        #print(module_path)
+        #print(_data[parameters["analysis"][analysis]["source"]])
+
+        papermill_input[analysis] = { "module": module_path, "data" : _data[parameters["analysis"][analysis]["source"]] }
+
+
+        new_cells = build_cells(analysis)
+        print(new_cells)
+
+        nb = append_cell_set(nb, new_cells)
+
+        #single-source only!
+        #   papermill_input[analysis][data].append(_data[source])
+        #papermill_input[analysis]["data"] = _data[parameters[analysis]["source"]]
+        
+        #analysis_list[analysis] = {
+        #    "template": parameters[analysis]["type"], "parameters": parameters[analysis]["parameters"]}
+
+
+
+    # # here we go call the cellbuilder for analysis
+    # for analysis in analysis_list:
+
+    #     new_cells = build_cells(analysis)
+    #     print(new_cells)
+
+    #     nb = append_cell_set(nb, new_cells)
 
 
     # append footer
@@ -83,12 +107,20 @@ def build_and_run(_templateName, _data):
     with open(fname, 'w') as f:
         nbf.write(nb, f)
 
+    dist_input_path = "./" + fname
+    dist_output_path = "./output_" + fname
+
     # run it with papermill
+    pm.execute_notebook(
+        dist_input_path,
+        dist_output_path,
+        parameters=papermill_input
+    )
 
 
 def append_cell_set(_originalCells, _append):
     
-    #There must be a native wa to do this in a generalized way
+    #There must be a native way to do this in a generalized fashion
 
     newSet = _originalCells
     for cell in _append['cells']:
@@ -114,7 +146,25 @@ def append_cell_set(_originalCells, _append):
 #        - return them
 
 def build_cells(_name):
-    output_cells = []
+    output_cells = nbf.v4.new_notebook()
+
+    code = "current_analysis = " + _name 
+    output_cells['cells'].append(nbf.v4.new_code_cell(code))
+
+    template = nbf.read(
+        str("./src/builder_template.ipynb"), as_version=4)
+
+    append_cell_set(output_cells, template)
+
+    #print(code)
+    return output_cells
+
+    #create cell that sets current_analysis = _name
+    # append cell that does what kristofer did
+    # 
+    # return set of cells
+    #  
+
     #import library from the relevant folder
 
     #create markdown cell with Header
