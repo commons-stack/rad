@@ -1,5 +1,11 @@
+from importlib.metadata import distribution
+from ..straightDistribution import StraightDistribution
 import plotly.express as px
+import pandas as pd
+import json
 
+
+#change to markdown
 header = "Histogram"
 description = "Histo Histo Gram Gram"
 author = "Nuggan"
@@ -7,16 +13,32 @@ Last_updated= "2022."
 version=""
 
 def run(straight_distribution_data):
+    #print(type(straight_distribution_data))
+    distribution = StraightDistribution.generate_from_dict(straight_distribution_data)
+    res = distribution.distribution_results
 
-    distribution = StraightDistribution(straight_distribution_data).get_distribution_results()
+    # initialize list of lists
+    #data = [['tom', 10], ['nick', 15], ['juli', 14]]
+ 
+    # Create the pandas DataFrame
+    #res = pd.DataFrame(data, columns=['ID', 'AMOUNT TO RECEIVE'])
+ 
+    # print dataframe.
+    
 
-    return distribution
+    #print(type(res))
+    #print(str(res))
 
-def print(self, straight_distribution_data):
 
-    distribution = self.run(straight_distribution_data)
+    #distribution = pd.DataFrame()
 
-    fig_freq = px.bar(distribution,  x="index", y="AMOUNT TO RECEIVE",labels={"AMOUNT TO RECEIVE": "Received","index": "Beneficiary"}, title="Rating Distribution", width=800, height=300)
+    return res
+
+def printGraph(straight_distribution_data):
+
+    distribution = pd.DataFrame(run(straight_distribution_data))
+
+    fig_freq = px.bar(distribution,  x=distribution.index, y="AMOUNT TO RECEIVE",labels={"AMOUNT TO RECEIVE": "Received","index": "Beneficiary"}, title="Rating Distribution", width=800, height=300)
     fig_freq.show()
 
 

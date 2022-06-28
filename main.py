@@ -56,7 +56,7 @@ for reward_system in params["rewards"]:
     # create rewards Object
     rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
         params["rewards"][reward_system]["type"], params["rewards"][reward_system])
-    print(rewardsystem_objects[reward_system].get_distribution_results())
+    #print(rewardsystem_objects[reward_system].get_distribution_results())
 
 
 # for template in params["reports"]:

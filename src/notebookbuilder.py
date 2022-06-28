@@ -19,6 +19,7 @@
 
 
 from sys import path
+import subprocess
 import nbformat as nbf
 import importlib
 import json
@@ -59,7 +60,7 @@ def build_and_run(_templateName, _data):
 
     # prepare giant papermill input list:
     papermill_input = {}
-    papermill_input["_data"] = _data
+    #papermill_input["_data"] = _data
 
 
     #   for each analysis in parameters["analysis"]
@@ -73,11 +74,11 @@ def build_and_run(_templateName, _data):
         #print(module_path)
         #print(_data[parameters["analysis"][analysis]["source"]])
 
-        papermill_input[analysis] = { "module": module_path, "data" : _data[parameters["analysis"][analysis]["source"]] }
+        papermill_input[analysis] = { "module": module_path, "data" : _data[parameters["analysis"][analysis]["source"]].__dict__ }
 
 
         new_cells = build_cells(analysis)
-        print(new_cells)
+        #print(new_cells)
 
         nb = append_cell_set(nb, new_cells)
 
@@ -110,12 +111,22 @@ def build_and_run(_templateName, _data):
     dist_input_path = "./" + fname
     dist_output_path = "./output_" + fname
 
+    #print(papermill_input)
+
     # run it with papermill
+    # TODO generate the notebook above with kernel etc already defined. It's more intuitive
     pm.execute_notebook(
         dist_input_path,
         dist_output_path,
-        parameters=papermill_input
+        parameters=papermill_input,
+        kernel_name='python',
+        language='python'
     )
+
+
+    return_buf = subprocess.run(
+        "jupyter nbconvert --log-level=0 --to html --TemplateExporter.exclude_input=True %s" % dist_output_path, shell=True)
+
 
 
 def append_cell_set(_originalCells, _append):
@@ -148,7 +159,7 @@ def append_cell_set(_originalCells, _append):
 def build_cells(_name):
     output_cells = nbf.v4.new_notebook()
 
-    code = "current_analysis = " + _name 
+    code = "current_analysis = " + _name + "\n#print(current_analysis)"
     output_cells['cells'].append(nbf.v4.new_code_cell(code))
 
     template = nbf.read(
