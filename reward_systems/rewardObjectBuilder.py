@@ -1,9 +1,13 @@
-#from . import *
+# from . import *
 from .straight_distribution import *
-#from .straight_distribution import StraightDistribution
-#from .sourcecred import Sourcecred
+
+# from .straight_distribution import StraightDistribution
+# from .sourcecred import Sourcecred
 
 import pandas as pd
+
+
+# [TODO] reasses if there is a better way to do this
 
 
 def build_reward_object(_name, _params):
@@ -20,5 +24,4 @@ def build_reward_object(_name, _params):
 
 
 def create_straight_distribution_object(_params):
-    print(".")
     return StraightDistribution.generate_from_params(_params)

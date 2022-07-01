@@ -12,13 +12,24 @@
         "token_name": "TEC",
         "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
       }
+    },
+    "quantifiers": {
+      "type": "straight_distribution",
+      "distribution_amount": "500",
+      "input_files": {
+        "beneficiary_list": "quantifiers.csv"
+      },
+      "payout_token": {
+        "token_name": "TEC",
+        "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
+      }
     }
   },
   "reports": {
     "rewardboard_histogram": {
       "system": "straight_distribution",
-      "name": "rewardboard-histogram",
-      "sources": ["rewardboard"]
+      "name": "rewardboard_histogram",
+      "sources": ["rewardboard", "quantifiers"]
     }
   }
 }

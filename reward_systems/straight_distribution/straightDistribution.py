@@ -6,8 +6,14 @@ from src.rewardSystem import RewardSystem
 
 
 class StraightDistribution(RewardSystem):
-
-    def __init__(self, _beneficiaries, _distAmount, _tokenName, _tokenAddress, _distributionResults={}):
+    def __init__(
+        self,
+        _beneficiaries,
+        _distAmount,
+        _tokenName,
+        _tokenAddress,
+        _distributionResults={},
+    ):
         super().__init__("praise")
         self.beneficiaries = _beneficiaries
         self.totalDistAmount = int(_distAmount)
@@ -18,43 +24,53 @@ class StraightDistribution(RewardSystem):
         if _distributionResults == {}:
             self.do_distribution()
 
-    def __str__(self): 
-        return "From str method of StrightDistr: totalDistAmount is % s, tokenName is % s, results are % s" % (self.totalDistAmount, self.tokenName, str(self.distribution_results)) 
-  
+    def __str__(self):
+        return (
+            "From str method of StrightDistr: totalDistAmount is % s, tokenName is % s, results are % s"
+            % (self.totalDistAmount, self.tokenName, str(self.distribution_results))
+        )
 
     @classmethod
     def generate_from_params(cls, _params):
         beneficiaries_input = pd.read_csv(_params["input_files"]["beneficiary_list"])
-        #lets make this through pandas to be sure 
+        # lets pipe this through pandas to be sure we don't run into issues
         beneficiaries = pd.DataFrame.to_dict(beneficiaries_input)
         distAmount = _params["distribution_amount"]
         tokenName = _params["payout_token"]["token_name"]
         tokenAddress = _params["payout_token"]["token_address"]
 
-        return cls(_beneficiaries=beneficiaries, _distAmount=distAmount, _tokenName=tokenName, _tokenAddress=tokenAddress)
+        return cls(
+            _beneficiaries=beneficiaries,
+            _distAmount=distAmount,
+            _tokenName=tokenName,
+            _tokenAddress=tokenAddress,
+        )
 
     @classmethod
     def generate_from_dict(cls, _dict):
 
-        #print(_dict)
-
-        # maybe redo using this : http://kiennt.com/blog/2012/06/14/python-object-and-dictionary-convertion.html
         beneficiaries = _dict["beneficiaries"]
         distAmount = _dict["totalDistAmount"]
         tokenName = _dict["tokenName"]
         tokenAddress = _dict["tokenAddress"]
         distributionResults = _dict["distributionResults"]
 
-        
-        return cls(_beneficiaries=beneficiaries, _distAmount=distAmount, _tokenName=tokenName, _tokenAddress=tokenAddress, _distributionResults=distributionResults)
+        return cls(
+            _beneficiaries=beneficiaries,
+            _distAmount=distAmount,
+            _tokenName=tokenName,
+            _tokenAddress=tokenAddress,
+            _distributionResults=distributionResults,
+        )
 
     def do_distribution(self) -> None:
 
         dist_results = pd.DataFrame.from_dict(self.beneficiaries)
-        dist_results['AMOUNT TO RECEIVE'] = self.totalDistAmount / \
-            len(dist_results.index)
+        dist_results["AMOUNT TO RECEIVE"] = self.totalDistAmount / len(
+            dist_results.index
+        )
         self.distribution_results = pd.DataFrame.to_dict(dist_results)
 
     def get_distribution_results(self):
-        #broken. fix
+        # [TODO]broken. fix
         return pd.DataFrame.from_dict(self.distributionResults)

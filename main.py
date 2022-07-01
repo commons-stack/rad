@@ -22,54 +22,69 @@ import reward_systems.rewardObjectBuilder as objBuilder
 import src.notebookbuilder as nbBuilder
 
 
-parser = argparse.ArgumentParser(
-    description='RAD main script')
-parser.add_argument("-p", "--path", type=str, required=True,
-                    help="Path to the folder in which we'll perform the analysis")
+def run_rad(_inputPath):
 
-args = parser.parse_args()
-# declare the paths where we want to save stuff as constants for easy reference
-ROOT_INPUT_PATH = args.path
+    _inputParameters = _inputPath + "/parameters.json"
+
+    params = {}
+    with open(_inputParameters, "r") as read_file:
+        params = json.load(read_file)
+
+    rewardsystem_objects = {}
+    for reward_system in params["rewards"]:
+        # make sure the notebook finds the path to the files
+        for file in params["rewards"][reward_system]["input_files"]:
+            params["rewards"][reward_system]["input_files"][file] = os.path.abspath(
+                os.path.join(
+                    input_path, params["rewards"][reward_system]["input_files"][file]
+                )
+            )
+
+        # create rewards Object
+        rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
+            params["rewards"][reward_system]["type"], params["rewards"][reward_system]
+        )
+        # print(rewardsystem_objects[reward_system].get_distribution_results())
+
+    for template_name in params["reports"]:
+        # add all relevant praise objects to the input and build the notebook
+        _data = {}
+        for source_system in params["reports"][template_name]["sources"]:
+            _data[source_system] = rewardsystem_objects[source_system]
+        nbBuilder.build_and_run(template_name, _data)
+
+    # [TODO] for export in params["exports"]
+    # run exports
+
+    # [TODO] Save the different kinds of exports at different places, or handle as separately
+    for output_file in os.listdir():
+        if output_file.endswith(".csv"):
+            file_destination = _inputPath + "/my_reports/" + output_file
+            os.rename(output_file, file_destination)
+
+        if output_file.endswith(".html"):
+            file_destination = _inputPath + "/my_reports/" + output_file
+            os.rename(output_file, file_destination)
+
+        if output_file.endswith(".ipynb"):
+            file_destination = _inputPath + "/my_reports/" + output_file
+            os.rename(output_file, file_destination)
 
 
-# quick conveniency check
-ROOT_INPUT_PATH = ROOT_INPUT_PATH if ROOT_INPUT_PATH[-1] == "/" else (
-    ROOT_INPUT_PATH+"/")
+if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description="RAD main script")
+    parser.add_argument(
+        "-p",
+        "--path",
+        type=str,
+        required=True,
+        help="Path to the folder in which we'll perform the analysis",
+    )
+    args = parser.parse_args()
 
-input_parameters = ROOT_INPUT_PATH + "/parameters.json"
+    input_path = args.path
+    # quick conveniency check
+    input_path = input_path if input_path[-1] == "/" else (input_path + "/")
 
-
-
-
-params = {}
-with open(input_parameters, "r") as read_file:
-    params = json.load(read_file)
-
-rewardsystem_objects = {}
-for reward_system in params["rewards"]:
-    # make sure the notebook finds the path to the files
-    for file in params["rewards"][reward_system]["input_files"]:
-        params["rewards"][reward_system]["input_files"][file] = os.path.abspath(
-            os.path.join(ROOT_INPUT_PATH, params["rewards"][reward_system]["input_files"][file])) 
-            
-    # create rewards Object
-    rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
-        params["rewards"][reward_system]["type"], params["rewards"][reward_system])
-    #print(rewardsystem_objects[reward_system].get_distribution_results())
-
-
-# for template in params["reports"]:
-for template_name in params["reports"]:
-
-    # create list of necessary inputs (it will receive all necessary praise objects as input)
-    _data = {}
-    for source_system in params["reports"][template_name]["sources"]:
-        _data[source_system] = rewardsystem_objects[source_system]
-    nbBuilder.build_and_run(template_name, _data)
-
-
-# for export in params["exports"]
-    # run export
-
-# move files to destination folder and clean up
+    run_rad(input_path)

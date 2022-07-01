@@ -1,23 +1,3 @@
-# ON-THE-FLY NOTEBOOK BUILDER
-
-#   receives:
-#       - a template name
-#       - the necessary data to run that template in JSON format
-#
-#   outputs:
-#       - a notebook following the specified template, executed with the received data. Saved as a file
-
-#   execution:
-#       -load template JSON
-#       -create empty notebook
-#       -prepare papermill parameters
-#       - append header from template
-#       - run module/cellbuilder.py for every analysis step and append them to notebook
-#       - append footer from template
-#       - run the notebook with papermill (maybe we can avoid saving it to a file?)
-#       - save the executed notebook
-
-
 from sys import path
 import subprocess
 import nbformat as nbf
@@ -27,82 +7,84 @@ import papermill as pm
 
 
 def build_and_run(_templateName, _data):
+    '''
+    Builds and runs a notebook from a specified template and dataset
 
-    nb = nbf.v4.new_notebook()
+    Args:
+        _templateName(string): The name of the template for the rewards notebook we want to generate. Must match the folder name where the JSON specification of the template is stored.
+        _data(RewardSystem):  A list of all reward system objects necessary to run the analysis notebook
+
+    Raises:
+        [TODO] Implement errors and list them here.
+
+    Returns:
+        result(bool): True if everything worked correctly. 
+
+    Stores:
+        report instance (.html): An instance of the chosen analysis report in HTML format. This is a non-modifiable export of the generated notebook, while keeping the interactive graphs.
+        output_notebook(.ipynb): A copy of the generated notebook in executed state with the relevant data imported through the papermill library for easy re-running.
+
+
+    '''
+
+
 
     path_to_report = "./reports/" + _templateName + "/"
-
     parameters_path = path_to_report + _templateName + ".json"
+    
     parameters = {}
     with open(parameters_path, "r") as read_file:
         parameters = json.load(read_file)
 
-
-    imports = nbf.read(
-        str(path_to_report + parameters["sources"]["imports"]), as_version=4)
-    header = nbf.read(
-        str(path_to_report + parameters["sources"]["header"]), as_version=4)
-    footer = nbf.read(
-        str(path_to_report + parameters["sources"]["footer"]), as_version=4)
-
-     # prepare papermill inputs cell
+    # The main notebook which we will build
+    #[TODO] specify kernel and other basic info in the creation step (currently done by papermill)
+    nb = nbf.v4.new_notebook()
+    
+    # prepare papermill inputs cell
     papermill_cell = nbf.v4.new_code_cell("input_params= {}")
     papermill_cell.metadata.tags = ["parameters"]
     nb["cells"].append(papermill_cell)
 
-    # generate cell with imports (specially the analysis module)
+
+    imports = nbf.read(
+        str(path_to_report + parameters["sources"]["imports"]), as_version=4)
     nb = append_cell_set(nb, imports)
   
-    # append header
+
+    header = nbf.read(
+        str(path_to_report + parameters["sources"]["header"]), as_version=4)
     nb = append_cell_set(nb, header)
   
 
 
     # prepare giant papermill input list:
     papermill_input = {}
-    #papermill_input["_data"] = _data
 
 
-    #   for each analysis in parameters["analysis"]
-    for analysis in parameters["analysis"]:
-        #       create a list with the required raw input and save under the analysis name
-        #REDO 
 
-        #generate module path
-        module_path = "reward_systems." + parameters["analysis"][analysis]["reward_system"] + ".analysis_tools." + parameters["analysis"][analysis]["type"]
+    for analysis_module in parameters["analysis"]:
+        # generates the full module path for the notebook, stores all necessary data as papermill input and appends the set of cells to the notebook which will run said analysis
 
-        #print(module_path)
-        #print(_data[parameters["analysis"][analysis]["source"]])
+        module_path = "reward_systems." + parameters["analysis"][analysis_module]["reward_system"] + ".analysis_tools." + parameters["analysis"][analysis_module]["type"]
 
-        papermill_input[analysis] = { "module": module_path, "data" : _data[parameters["analysis"][analysis]["source"]].__dict__ }
+ 
+        papermill_input[analysis_module] = { "module": module_path, "data" : _data[parameters["analysis"][analysis_module]["source"]].__dict__ }
 
 
-        new_cells = build_cells(analysis)
-        #print(new_cells)
+        new_cells = build_module_cells(analysis_module)
 
         nb = append_cell_set(nb, new_cells)
 
-        #single-source only!
-        #   papermill_input[analysis][data].append(_data[source])
-        #papermill_input[analysis]["data"] = _data[parameters[analysis]["source"]]
-        
-        #analysis_list[analysis] = {
-        #    "template": parameters[analysis]["type"], "parameters": parameters[analysis]["parameters"]}
 
-
-
-    # # here we go call the cellbuilder for analysis
-    # for analysis in analysis_list:
-
-    #     new_cells = build_cells(analysis)
-    #     print(new_cells)
-
-    #     nb = append_cell_set(nb, new_cells)
-
-
-    # append footer
+    
+   
+    footer = nbf.read(
+        str(path_to_report + parameters["sources"]["footer"]), as_version=4)
     nb = append_cell_set(nb, footer)
 
+
+
+    #[TODO] implement sensible naming policy
     fname = 'test_output.ipynb'
 
     with open(fname, 'w') as f:
@@ -111,10 +93,10 @@ def build_and_run(_templateName, _data):
     dist_input_path = "./" + fname
     dist_output_path = "./output_" + fname
 
-    #print(papermill_input)
+
 
     # run it with papermill
-    # TODO generate the notebook above with kernel etc already defined. It's more intuitive
+    # [TODO] see comment on notebook creation (~line 60)
     pm.execute_notebook(
         dist_input_path,
         dist_output_path,
@@ -123,15 +105,33 @@ def build_and_run(_templateName, _data):
         language='python'
     )
 
-
+    #convert the executed notebook to HTML
     return_buf = subprocess.run(
         "jupyter nbconvert --log-level=0 --to html --TemplateExporter.exclude_input=True %s" % dist_output_path, shell=True)
 
 
+    #return true to confirm everything worked fine.
+    return True
+
+
 
 def append_cell_set(_originalCells, _append):
+    '''
+    Appends a group of cells to an already existing notebook
+
+    Args:
+        _originalCells(list): An already existing set of notebook cells
+        _append(list): A list of cells to be appended to said notebook
+
+    Raises: 
+        [TODO]: Check for errors and raise them
+
+    Returns: 
+        newSet(list): A notebook object with the new cells appended.
+
+    '''
     
-    #There must be a native way to do this in a generalized fashion
+    # [TODO] There must be a native way to do this in a generalized fashion
 
     newSet = _originalCells
     for cell in _append['cells']:
@@ -144,19 +144,20 @@ def append_cell_set(_originalCells, _append):
     return newSet
 
 
-# MOVED FROM NOTEBOOK CELL-BUILDER.PY 
+def build_module_cells(_name):
+    '''
+    Generates a set of cells that will run a specified analysis module inside the notebook.
+    
+    Args:
+        _name(string): The name of the module we want to build. The name must match one of the modules specified in the JSON template loaded into papermill by the build_and_run function.
 
-#   receives:
-#       - the JSON of an analysis step
-#   returns:
-#       - a set of jupyter notebook cell objects, which a markdown text introduction to the analysis step, the execution  of the analysis and relevant visualization instruction
-#
-#   execution:
-#        - import the function based on the JSON data 
-#        - generate cell objects
-#        - return them
+    Raises:
+        [TODO]: Check for errors and raise them
 
-def build_cells(_name):
+    Returns: 
+        output_cells(list): A list of cells to be added to the notebook which, when run, will generate the specified analysis in the "print-ready" representation for the report.
+    
+    '''
     output_cells = nbf.v4.new_notebook()
 
     code = "current_analysis = " + _name + "\n#print(current_analysis)"
@@ -167,34 +168,6 @@ def build_cells(_name):
 
     append_cell_set(output_cells, template)
 
-    #print(code)
     return output_cells
 
-    #create cell that sets current_analysis = _name
-    # append cell that does what kristofer did
-    # 
-    # return set of cells
-    #  
-
-    #import library from the relevant folder
-
-    #create markdown cell with Header
-    #create markdown cell with description
-    #create code cell that runs the print function (or just create cell with the results of the print func?) 
-
-    #return set of cells
-    return output_cells
-
-    # CODE FROM KRISTOFER
-    #     import importlib
-    # modnames = [
-    #   "sources.praise.analysis.modules.giverTotalScore", 
-    #   "sources.praise.analysis.modules.giverTotalScore2"
-    # ]
-    # modlist = []
-    # for lib in modnames:
-    #   mod = importlib.import_module(lib)
-    #   print(mod.header)
-    #   print(mod.description)
-    #   mod.run(praise_distribution)
-
+  

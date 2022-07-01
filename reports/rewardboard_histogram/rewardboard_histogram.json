@@ -6,10 +6,15 @@
     "imports": "./imports.ipynb"
   },
   "analysis": {
-    "histogram": {
+    "rewardboard_overview": {
       "type": "histogram",
       "reward_system": "straight_distribution",
       "source": "rewardboard"
+    },
+    "another_histogram": {
+      "type": "histogram",
+      "reward_system": "straight_distribution",
+      "source": "quantifiers"
     }
   }
 }
