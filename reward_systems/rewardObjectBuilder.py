@@ -11,6 +11,18 @@ import pandas as pd
 
 
 def build_reward_object(_name, _params):
+    """
+    Creates a reward system object of a specfic type
+
+    Args:
+        _name: String specifying the name of the reward system
+        _params: the parameters with which to instantiate it
+    Raises:
+        [TODO]: Check for errors and raise them
+    Returns:
+        cls: An instance of the rewards system
+
+    """
     if _name == "praise":
         # return create_praise_object(_params)
         print("praise not implemented")
@@ -24,4 +36,14 @@ def build_reward_object(_name, _params):
 
 
 def create_straight_distribution_object(_params):
+    """
+    Creates a straight distribution object
+
+    Args:
+        _params: the parameters with which to instantiate it
+    Raises:
+        [TODO]: Check for errors and raise them
+    Returns:
+        cls: An instance of a straight rewards distribution
+    """
     return StraightDistribution.generate_from_params(_params)
