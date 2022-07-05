@@ -20,6 +20,7 @@ import json
 
 import reward_systems.rewardObjectBuilder as objBuilder
 import src.notebookbuilder as nbBuilder
+import src.exporter as exportBuilder
 
 
 def run_rad(_inputPath):
@@ -42,7 +43,9 @@ def run_rad(_inputPath):
 
         # create rewards Object
         rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
-            params["rewards"][reward_system]["type"], params["rewards"][reward_system]
+            reward_system,
+            params["rewards"][reward_system]["type"],
+            params["rewards"][reward_system],
         )
         # print(rewardsystem_objects[reward_system].get_distribution_results())
 
@@ -54,7 +57,11 @@ def run_rad(_inputPath):
         nbBuilder.build_and_run(template_name, _data)
 
     # [TODO] for export in params["exports"]
-    # run exports
+    for export in params["exports"]:
+        _data = {}
+        for source_system in params["reports"][export]["sources"]:
+            _data[source_system] = rewardsystem_objects[source_system]
+        exportBuilder.run_export(export, _data)
 
     # [TODO] Save the different kinds of exports at different places, or handle as separately
     for output_file in os.listdir():

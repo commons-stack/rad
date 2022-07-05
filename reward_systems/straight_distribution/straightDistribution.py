@@ -11,6 +11,7 @@ from src.rewardSystem import RewardSystem
 class StraightDistribution(RewardSystem):
     def __init__(
         self,
+        _name,
         _beneficiaries,
         _distAmount,
         _tokenName,
@@ -32,7 +33,7 @@ class StraightDistribution(RewardSystem):
             nothing.
 
         """
-        super().__init__("straight_distribution")
+        super().__init__(_name, "straight_distribution")
         self.beneficiaries = _beneficiaries
         self.totalDistAmount = int(_distAmount)
         self.tokenName = _tokenName
@@ -59,7 +60,7 @@ class StraightDistribution(RewardSystem):
         )
 
     @classmethod
-    def generate_from_params(cls, _params):
+    def generate_from_params(cls, _objectName, _params):
         """
         Creates an instance of the rewards system from the parameters as speified in the "parameters.json" file.
 
@@ -79,6 +80,7 @@ class StraightDistribution(RewardSystem):
         tokenAddress = _params["payout_token"]["token_address"]
 
         return cls(
+            _name=_objectName,
             _beneficiaries=beneficiaries,
             _distAmount=distAmount,
             _tokenName=tokenName,
@@ -99,7 +101,7 @@ class StraightDistribution(RewardSystem):
 
 
         """
-
+        name = _dict["name"]
         beneficiaries = _dict["beneficiaries"]
         distAmount = _dict["totalDistAmount"]
         tokenName = _dict["tokenName"]
@@ -107,6 +109,7 @@ class StraightDistribution(RewardSystem):
         distributionResults = _dict["distributionResults"]
 
         return cls(
+            _name=name,
             _beneficiaries=beneficiaries,
             _distAmount=distAmount,
             _tokenName=tokenName,
@@ -133,19 +136,3 @@ class StraightDistribution(RewardSystem):
             dist_results.index
         )
         self.distribution_results = pd.DataFrame.to_dict(dist_results)
-
-    def get_distribution_results(self):
-        """
-        Returns a DataFrame containing the results of the distribution.
-
-        Args:
-            (self): the object with the saved distribuiton
-        Raises:
-            [TODO]: Check for errors and raise them
-        Returns:
-            distribuiton_results: DataFrame containing the results.
-
-
-        """
-        # [TODO]broken. fix
-        return pd.DataFrame.from_dict(self.distributionResults)

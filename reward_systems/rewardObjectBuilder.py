@@ -10,7 +10,7 @@ import pandas as pd
 # [TODO] reasses if there is a better way to do this
 
 
-def build_reward_object(_name, _params):
+def build_reward_object(_name, _type, _params):
     """
     Creates a reward system object of a specfic type
 
@@ -23,19 +23,19 @@ def build_reward_object(_name, _params):
         cls: An instance of the rewards system
 
     """
-    if _name == "praise":
+    if _type == "praise":
         # return create_praise_object(_params)
         print("praise not implemented")
         pass
-    if _name == "straight_distribution":
-        return create_straight_distribution_object(_params)
-    if _name == "sourcecred":
+    if _type == "straight_distribution":
+        return create_straight_distribution_object(_name, _params)
+    if _type == "sourcecred":
         # return create_sourcecred_object(_params)
         print("sourcecred not implemented")
         pass
 
 
-def create_straight_distribution_object(_params):
+def create_straight_distribution_object(_name, _params):
     """
     Creates a straight distribution object
 
@@ -46,4 +46,4 @@ def create_straight_distribution_object(_params):
     Returns:
         cls: An instance of a straight rewards distribution
     """
-    return StraightDistribution.generate_from_params(_params)
+    return StraightDistribution.generate_from_params(_name, _params)

@@ -1,6 +1,7 @@
 class RewardSystem:
-    def __init__(self, _name) -> None:
+    def __init__(self, _name, _type) -> None:
         self.name = _name
+        self.type = _type
 
     @classmethod
     def generate_from_params(cls, _params):
