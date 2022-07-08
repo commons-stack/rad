@@ -59,9 +59,9 @@ def run_rad(_inputPath):
     # [TODO] for export in params["exports"]
     for export in params["exports"]:
         _data = {}
-        for source_system in params["reports"][export]["sources"]:
+        for source_system in params["exports"][export]["sources"]:
             _data[source_system] = rewardsystem_objects[source_system]
-        exportBuilder.run_export(export, _data)
+        exportBuilder.run_export(export, params["exports"][export], _data)
 
     # [TODO] Save the different kinds of exports at different places, or handle as separately
     for output_file in os.listdir():
@@ -76,6 +76,8 @@ def run_rad(_inputPath):
         if output_file.endswith(".ipynb"):
             file_destination = _inputPath + "/my_reports/" + output_file
             os.rename(output_file, file_destination)
+
+    print("========= DONE ==========")
 
 
 if __name__ == "__main__":

@@ -33,15 +33,15 @@
     }
   },
   "exports": {
-     "rewardboard_distribution":{
+    "rewardboard_distribution": {
       "type": "aragon_distribution",
       "sources": ["rewardboard"]
     },
-    "quantifier_distribution"{
+    "quantifier_distribution": {
       "type": "aragon_distribution",
       "sources": ["quantifiers"]
     },
-    "combined_distribution"{
+    "combined_distribution": {
       "type": "aragon_distribution",
       "sources": ["rewardboard", "quantifiers"]
     }
