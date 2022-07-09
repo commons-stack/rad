@@ -6,7 +6,6 @@ from IPython.display import Markdown, display
 import json
 
 
-# [TODO]change to markdown and find a way to insert some variables into the text so f.ex we can mention which dataset we are using
 # header = "# Histogram"
 # description = f"This is a histogram of the { self.objectName} object. It's stored in /reward_systems/straight_distribution as a regular python module. Apart from perfoming the analysis, it can also output a visual representation with a specific header (above) and description text. "
 author = "Nuggan"

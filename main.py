@@ -56,7 +56,6 @@ def run_rad(_inputPath):
             _data[source_system] = rewardsystem_objects[source_system]
         nbBuilder.build_and_run(template_name, _data)
 
-    # [TODO] for export in params["exports"]
     for export in params["exports"]:
         _data = {}
         for source_system in params["exports"][export]["sources"]:

@@ -4,12 +4,26 @@ from ..straightDistribution import StraightDistribution
 
 
 def run_export(_data, _config={}):
-    # distribution = StraightDistribution(_data)
+    """
+    Creates an Aragon-Transactions-friendly distribution CSV.
+
+        Args:
+            _data: the necessary data to generate it
+            _config:(Optional) dict with extra configuration data. Allows to link to a file which maps User IDs to addresses to subsititute in the rewards object
+        Raises:
+            [TODO] Implement errors and list them here.
+        Returns:
+            nothing, just saves the files
+    """
 
     final_token_allocations = pd.DataFrame(_data.distribution_results)
 
     final_alloc_aragon = final_token_allocations[["ID", "AMOUNT TO RECEIVE"]].copy()
     final_alloc_aragon["TOKEN SYMBOL"] = _data.tokenName
+
+    # [TODO] Allow to send a link in the config dict that substitutes IDs for addresses
+    #       Should come in handy for adding sourcecred
+
     final_alloc_aragon = final_alloc_aragon[
         final_alloc_aragon["ID"] != "missing user address"
     ]
