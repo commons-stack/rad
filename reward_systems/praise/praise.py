@@ -190,10 +190,11 @@ class Praise(RewardSystem):
         praise_distribution = calc_praise_rewards(
             self.dataTable.copy(), praiseTokenAmount
         )
-
+		
+	#Process praise to merge it with quant rewards
         processed_praise, praise_by_user = prepare_praise(praise_distribution.copy())
 
-        quantifier_rating_table = return_data_by_quantifier(praise_data.copy())
+        quantifier_rating_table = return_data_by_quantifier(self.dataTable.copy())
 
         quant_rewards = calc_quantifier_rewards(
             quantifier_rating_table.copy(), quantTokenAmount
