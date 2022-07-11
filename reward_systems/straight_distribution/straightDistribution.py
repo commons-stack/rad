@@ -1,8 +1,6 @@
 # STRAIGHT DISTRIBUTION
 # This system represents a simple rewards system where everybody shares a set amount of funds equally
 
-
-from importlib.metadata import distribution
 import pandas as pd
 
 from src.rewardSystem import RewardSystem
