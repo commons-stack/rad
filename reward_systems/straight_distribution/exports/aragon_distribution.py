@@ -16,7 +16,7 @@ def run_export(_data, _config={}):
             nothing, just saves the files
     """
 
-    final_token_allocations = pd.DataFrame(_data.distribution_results)
+    final_token_allocations = pd.DataFrame(_data.distributionResults)
 
     final_alloc_aragon = final_token_allocations[["ID", "AMOUNT TO RECEIVE"]].copy()
     final_alloc_aragon["TOKEN SYMBOL"] = _data.tokenName

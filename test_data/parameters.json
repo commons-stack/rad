@@ -4,7 +4,7 @@
   "rewards": {
     "tec_praise": {
       "type": "praise",
-      "distribution_amount": "1000",
+      "distribution_amount": "2814",
       "user_dist_pct": 90,
       "quantifiers_dist_pct": 10,
       "quantifiers_per_praise": 4,
@@ -52,17 +52,25 @@
     }
   },
   "exports": {
-    "rewardboard_distribution": {
+    "rewardboard_aragon": {
       "type": "aragon_distribution",
       "sources": ["rewardboard"]
     },
-    "quantifier_distribution": {
+    "quantifier_aragon": {
       "type": "aragon_distribution",
       "sources": ["quantifiers"]
     },
-    "combined_distribution": {
+    "combined_aragon": {
       "type": "aragon_distribution",
       "sources": ["rewardboard", "quantifiers"]
+    },
+    "praise_results": {
+      "type": "basic_distribution_results",
+      "sources": ["tec_praise"]
+    },
+    "extended_praise_table": {
+      "type": "extended_praise_data",
+      "sources": ["tec_praise"]
     }
   }
 }

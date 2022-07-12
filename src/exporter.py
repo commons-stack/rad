@@ -44,7 +44,8 @@ def run_single_export(_name, _config, _rewardObj):
 
     final_allocation_csv = mod.run_export(_rewardObj, _config)
 
-    filename = "export_" + _name + "_" + _config["type"] + ".csv"
+    # filename = "export_" + _name + "_" + _config["type"] + ".csv"
+    filename = _name + ".csv"
     with open(filename, "w") as f:
         f.write(final_allocation_csv)
 

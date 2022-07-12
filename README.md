@@ -14,5 +14,6 @@
 - (related) Review if it is necessary to implement a separate "combinator" module, or if the other modules can handle that internally.
 - In the Aragon export, allow to send a link in the config dict that substitutes IDs for addresses. Should come in handy for adding sourcecred
 - Research if there is a way to get rid of the rewardObjectBuilder class completely and natively handle new reward system objects.
+- Delete the template notebook after running it 
 
 

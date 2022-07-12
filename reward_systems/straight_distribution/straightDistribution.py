@@ -133,4 +133,4 @@ class StraightDistribution(RewardSystem):
         dist_results["AMOUNT TO RECEIVE"] = self.totalDistAmount / len(
             dist_results.index
         )
-        self.distribution_results = pd.DataFrame.to_dict(dist_results)
+        self.distributionResults = pd.DataFrame.to_dict(dist_results)

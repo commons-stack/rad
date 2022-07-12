@@ -50,7 +50,7 @@ class Praise(RewardSystem):
         self.dataTable = _dataTable
         self.quantPerPraise = int(_quantPerPraise)
         self.quantAllowedValues = _quantAllowedValues
-        self.duplicatePraiseValuation = Number(_duplicatePraiseValuation)
+        self.duplicatePraiseValuation = float(_duplicatePraiseValuation)
         self.pseudonymsActive = bool(_pseudonymsActive)
         self.userRewardPct = _userRewardPct
         self.quantifierRewardPct = _quantifierRewardPct
@@ -125,7 +125,7 @@ class Praise(RewardSystem):
     @classmethod
     def generate_from_dict(cls, _dict):
         """
-        Creates an instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
+        Recreates an existing instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
 
         Args:
             (_dict): the the dictionary from which we want to instatiate the class from. Must contain all the class attributes.
@@ -182,50 +182,77 @@ class Praise(RewardSystem):
         """
 
         # calc praise rewards
-        # WILL PROBABLY NEED DEBUGGING
+        # WILL PROBABLY NEED DEBUGGING  -> seems to work
+
+        # calculate praise rewards and update the datatable
 
         praiseTokenAmount = self.distAmount * self.userRewardPct / 100
+
+        praise_distribution = self.calc_praise_rewards(
+            pd.DataFrame(self.dataTable), praiseTokenAmount
+        )
+
+        self.dataTable = pd.DataFrame.to_dict(praise_distribution)
+
+        # Generate the final allocation including quant rewards and save it as distribution results
         quantTokenAmount = self.distAmount * self.quantifierRewardPct / 100
 
-        praise_distribution = calc_praise_rewards(
-            self.dataTable.copy(), praiseTokenAmount
-        )
-		
-	#Process praise to merge it with quant rewards
-        processed_praise, praise_by_user = prepare_praise(praise_distribution.copy())
+        praise_by_user = self.get_praise_by_user()
+        quantifier_rating_table = self.get_data_by_quantifier()
 
-        quantifier_rating_table = return_data_by_quantifier(self.dataTable.copy())
-
-        quant_rewards = calc_quantifier_rewards(
+        quant_rewards = self.calc_quantifier_rewards(
             quantifier_rating_table.copy(), quantTokenAmount
         )
 
-        final_token_allocations = prepare_total_data_chart(
+        final_token_allocations = self.prepare_merged_reward_table(
             praise_by_user.copy(), quant_rewards.copy()
         )
 
-        # [TODO] Choose what to save in object state (do we need dataTable or is processed_praise enough?)
+        self.distributionResults = pd.DataFrame.to_dict(final_token_allocations)
 
-    def calc_praise_rewards(praiseData, tokensToDistribute):
+        # exports we want to build:
+        # extended praise
+        # final praise alloc
+        # aragon_dist
+
+        # print(quant_rewards)
+
+        # save to file for testing purposes
+        # filename = "TEST_PRAISE_EXPORT.csv"
+        # final_allocation_csv = final_token_allocations.to_csv(sep=",", index=False)
+        # with open(filename, "w") as f:
+        #     f.write(final_allocation_csv)
+
+        # filename = "TEST_QUANT_EXPORT.csv"
+        # final_allocation_csv = quant_rewards.to_csv(sep=",", index=False)
+        # with open(filename, "w") as f:
+        #     f.write(final_allocation_csv)
+
+        # filename = "TEST_EXTENDED_EXPORT.csv"
+        # final_allocation_csv = praise_distribution.to_csv(sep=",", index=False)
+        # with open(filename, "w") as f:
+        #     f.write(final_allocation_csv)
+
+    def calc_praise_rewards(self, praiseData, tokensToDistribute):
         # we discard all we don't need and and calculate the % worth of each praise
 
         totalPraisePoints = praiseData["AVG SCORE"].sum()
 
         praiseData["PERCENTAGE"] = praiseData["AVG SCORE"] / totalPraisePoints
         praiseData["TOKEN TO RECEIVE"] = praiseData["PERCENTAGE"] * tokensToDistribute
+
         return praiseData
 
-    def prepare_praise(praise_data):
+    def get_praise_by_user(self):
 
-        praise_data.rename(columns={"TO USER ACCOUNT": "USER IDENTITY"}, inplace=True)
-        praise_data.rename(columns={"TO ETH ADDRESS": "USER ADDRESS"}, inplace=True)
-        praise_data["USER ADDRESS"].fillna("MISSING USER ADDRESS", inplace=True)
+        praiseData = pd.DataFrame(self.dataTable)
 
-        processed_praise = praise_data[
-            ["USER IDENTITY", "USER ADDRESS", "PERCENTAGE", "TOKEN TO RECEIVE"]
-        ]
+        praiseData.rename(columns={"TO USER ACCOUNT": "USER IDENTITY"}, inplace=True)
+        praiseData.rename(columns={"TO ETH ADDRESS": "USER ADDRESS"}, inplace=True)
+        praiseData["USER ADDRESS"].fillna("MISSING USER ADDRESS", inplace=True)
+
         praise_by_user = (
-            praise_data[
+            praiseData[
                 [
                     "USER IDENTITY",
                     "USER ADDRESS",
@@ -240,9 +267,9 @@ class Praise(RewardSystem):
             .reset_index()
         )
 
-        return processed_praise, praise_by_user
+        return praise_by_user
 
-    def calc_quantifier_rewards(quantifierData, tokensToDistribute):
+    def calc_quantifier_rewards(self, quantifierData, tokensToDistribute):
         quantifier_sum = (
             quantifierData[["QUANT_ID", "QUANT_VALUE"]].groupby("QUANT_ID").sum()
         )
@@ -274,10 +301,13 @@ class Praise(RewardSystem):
 
         return quantifier_rewards
 
-    def return_data_by_quantifier(praise_data):
+    def get_data_by_quantifier(self):
+
+        praise_data = pd.DataFrame(self.dataTable)
+
         quant_only = pd.DataFrame()
         # praise_data.drop(['DATE', 'TO USER ACCOUNT', 'TO USER ACCOUNT ID', 'TO ETH ADDRESS', 'FROM USER ACCOUNT', 'FROM USER ACCOUNT ID', 'FROM ETH ADDRESS', 'REASON', 'SOURCE ID', 'SOURCE NAME', 'AVG SCORE'], axis=1, inplace=True)
-        num_of_quants = NUMBER_OF_QUANTIFIERS_PER_PRAISE
+        num_of_quants = self.quantPerPraise
         for i in range(num_of_quants):
             q_name = str("QUANTIFIER " + str(i + 1) + " USERNAME")
             q_addr = str("QUANTIFIER " + str(i + 1) + " ETH ADDRESS")
@@ -312,9 +342,7 @@ class Praise(RewardSystem):
         return quant_only
 
     # def return_total_data_chart
-    def prepare_total_data_chart(
-        praise_rewards, quantifier_rewards, rewardboard_rewards
-    ):
+    def prepare_merged_reward_table(self, praise_rewards, quantifier_rewards):
 
         praise_rewards = praise_rewards.copy()[
             ["USER IDENTITY", "USER ADDRESS", "TOKEN TO RECEIVE"]
@@ -334,25 +362,10 @@ class Praise(RewardSystem):
             "USER ADDRESS"
         ].str.lower()
 
-        rewardboard_rewards.rename(
-            columns={"ID": "USER ADDRESS", "TOKEN TO RECEIVE": "REWARDBOARD_REWARD"},
-            inplace=True,
-        )
-        rewardboard_rewards["USER ADDRESS"] = rewardboard_rewards[
-            "USER ADDRESS"
-        ].str.lower()
-
         final_allocations = pd.merge(
-            rewardboard_rewards,
+            praise_rewards,
             quantifier_rewards,
             on=["USER ADDRESS", "USER ADDRESS"],
-            how="outer",
-        )
-        final_allocations = pd.merge(
-            final_allocations,
-            praise_rewards,
-            left_on=["USER ADDRESS"],
-            right_on=["USER ADDRESS"],
             how="outer",
         )
 
@@ -368,9 +381,7 @@ class Praise(RewardSystem):
         final_allocations["USER IDENTITY"].fillna("missing username", inplace=True)
         final_allocations.fillna(0, inplace=True)
         final_allocations["TOTAL TO RECEIVE"] = (
-            final_allocations["PRAISE_REWARD"]
-            + final_allocations["QUANT_REWARD"]
-            + final_allocations["REWARDBOARD_REWARD"]
+            final_allocations["PRAISE_REWARD"] + final_allocations["QUANT_REWARD"]
         )
 
         final_allocations = final_allocations.sort_values(
@@ -385,7 +396,6 @@ class Praise(RewardSystem):
                 "PRAISE_REWARD",
                 "QUANT_REWARD",
                 "NR_OF_PRAISES_QUANTIFIED",
-                "REWARDBOARD_REWARD",
                 "TOTAL TO RECEIVE",
             ]
         ]

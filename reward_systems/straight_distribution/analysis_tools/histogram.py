@@ -27,7 +27,7 @@ def run(straight_distribution_data):
     """
     # print(straight_distribution_data)
     distribution = StraightDistribution.generate_from_dict(straight_distribution_data)
-    res = distribution.distribution_results
+    res = distribution.distributionResults
 
     return res
 

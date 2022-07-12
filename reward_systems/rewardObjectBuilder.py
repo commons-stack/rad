@@ -1,4 +1,5 @@
 # from . import *
+from reward_systems.praise.praise import Praise
 from .straight_distribution import *
 
 # from .straight_distribution import StraightDistribution
@@ -25,8 +26,7 @@ def build_reward_object(_name, _type, _params):
     """
     if _type == "praise":
         # return create_praise_object(_params)
-        print("praise not implemented")
-        pass
+        return create_praise_object(_name, _params)
     if _type == "straight_distribution":
         return create_straight_distribution_object(_name, _params)
     if _type == "sourcecred":
@@ -47,3 +47,17 @@ def create_straight_distribution_object(_name, _params):
         cls: An instance of a straight rewards distribution
     """
     return StraightDistribution.generate_from_params(_name, _params)
+
+
+def create_praise_object(_name, _params):
+    """
+    Creates a Praise object
+
+    Args:
+        _params: the parameters with which to instantiate it
+    Raises:
+        [TODO]: Check for errors and raise them
+    Returns:
+        cls: An instance of a straight rewards distribution
+    """
+    return Praise.generate_from_params(_name, _params)

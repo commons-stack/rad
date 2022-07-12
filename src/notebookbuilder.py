@@ -106,6 +106,8 @@ def build_and_run(_templateName, _data):
         shell=True,
     )
 
+    # [TODO] we can now delete the template notebook
+
     # return true to confirm everything worked fine.
     return True
 
