@@ -52,9 +52,10 @@ def run_rad(_inputPath):
     for template_name in params["reports"]:
         # add all relevant praise objects to the input and build the notebook
         _data = {}
+        template_type = params["reports"][template_name]["type"]
         for source_system in params["reports"][template_name]["sources"]:
             _data[source_system] = rewardsystem_objects[source_system]
-        nbBuilder.build_and_run(template_name, _data)
+        nbBuilder.build_and_run(template_name, template_type, _data)
 
     for export in params["exports"]:
         _data = {}
@@ -62,11 +63,15 @@ def run_rad(_inputPath):
             _data[source_system] = rewardsystem_objects[source_system]
         exportBuilder.run_export(export, params["exports"][export], _data)
 
-    # [TODO] Save the different kinds of exports at different places, or handle as separately
+    # [TODO] Save the different kinds of exports at different places, handle in a way that all exports are moved and you dont have to whitelist stuff
+
     for output_file in os.listdir():
-        if output_file.endswith(".csv"):
-            file_destination = _inputPath + "/my_reports/" + output_file
-            os.rename(output_file, file_destination)
+        if output_file.endswith(".csv") or output_file.endswith(".md"):
+            if output_file == "README.md":
+                pass
+            else:
+                file_destination = _inputPath + "/my_reports/" + output_file
+                os.rename(output_file, file_destination)
 
         if output_file.endswith(".html"):
             file_destination = _inputPath + "/my_reports/" + output_file

@@ -6,12 +6,13 @@ import json
 import papermill as pm
 
 
-def build_and_run(_templateName, _data):
+def build_and_run(_templateName, _templateType, _data):
     """
     Builds and runs a notebook from a specified template and dataset
 
     Args:
-        _templateName(string): The name of the template for the rewards notebook we want to generate. Must match the folder name where the JSON specification of the template is stored.
+        _templateName(string): The name of the report notebook we want to generate.
+        _templateType(string): The name of the template we'll use to build it. Must match the folder name where the JSON specification of the template is stored.
         _data(RewardSystem):  A list of all reward system objects necessary to run the analysis notebook
 
     Raises:
@@ -27,8 +28,8 @@ def build_and_run(_templateName, _data):
 
     """
 
-    path_to_report = "./reports/" + _templateName + "/"
-    parameters_path = path_to_report + _templateName + ".json"
+    path_to_report = "./reports/" + _templateType + "/"
+    parameters_path = path_to_report + _templateType + ".json"
 
     parameters = {}
     with open(parameters_path, "r") as read_file:

@@ -18,4 +18,4 @@ def run_export(_data, _config={}):
     final_token_allocations = pd.DataFrame(_data.distributionResults)
     final_allocation_csv = final_token_allocations.to_csv(sep=",", index=False)
 
-    return final_allocation_csv
+    return final_allocation_csv, ".csv"

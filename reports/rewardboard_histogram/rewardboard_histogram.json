@@ -1,5 +1,5 @@
 {
-  "name": "General RAD report",
+  "name": "TEST Rewardboard Histogram ",
   "sources": {
     "header": "./header.ipynb",
     "footer": "./footer.ipynb",

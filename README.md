@@ -15,5 +15,7 @@
 - In the Aragon export, allow to send a link in the config dict that substitutes IDs for addresses. Should come in handy for adding sourcecred
 - Research if there is a way to get rid of the rewardObjectBuilder class completely and natively handle new reward system objects.
 - Delete the template notebook after running it 
-
+- [Lots of refactor probably]Add the option to add config data to the notebook builder cells, so we can use parameters for stuff like praise flows
+- Hard praise flow refactor
+- Something in the praise flow makes a warning pop up when converting. figure out what it is
 

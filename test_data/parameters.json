@@ -45,10 +45,13 @@
     }
   },
   "reports": {
-    "rewardboard_histogram": {
-      "system": "straight_distribution",
-      "name": "rewardboard_histogram",
+    "basic_rewardboard_histogram": {
+      "type": "rewardboard_histogram",
       "sources": ["rewardboard", "quantifiers"]
+    },
+    "test_rad_report": {
+      "type": "general_rad_report",
+      "sources": ["rewardboard", "tec_praise"]
     }
   },
   "exports": {
@@ -70,6 +73,10 @@
     },
     "extended_praise_table": {
       "type": "extended_praise_data",
+      "sources": ["tec_praise"]
+    },
+    "praise_forum_post": {
+      "type": "forum_post",
       "sources": ["tec_praise"]
     }
   }

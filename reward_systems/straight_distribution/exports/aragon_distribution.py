@@ -29,4 +29,4 @@ def run_export(_data, _config={}):
     ]
     final_alloc_aragon = final_alloc_aragon.to_csv(sep=",", index=False, header=False)
 
-    return final_alloc_aragon
+    return final_alloc_aragon, ".csv"

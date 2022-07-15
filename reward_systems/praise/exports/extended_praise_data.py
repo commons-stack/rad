@@ -18,4 +18,4 @@ def run_export(_data, _config={}):
     extended_praise_table = pd.DataFrame(_data.dataTable)
     final_allocation_csv = extended_praise_table.to_csv(sep=",", index=False)
 
-    return final_allocation_csv
+    return final_allocation_csv, ".csv"

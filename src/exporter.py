@@ -42,12 +42,12 @@ def run_single_export(_name, _config, _rewardObj):
     PATH_TO_MODULE = "reward_systems." + _rewardObj.type + ".exports." + _config["type"]
     mod = importlib.import_module(PATH_TO_MODULE)
 
-    final_allocation_csv = mod.run_export(_rewardObj, _config)
+    export_file, export_extension = mod.run_export(_rewardObj, _config)
 
     # filename = "export_" + _name + "_" + _config["type"] + ".csv"
-    filename = _name + ".csv"
+    filename = _name + export_extension
     with open(filename, "w") as f:
-        f.write(final_allocation_csv)
+        f.write(export_file)
 
     return
 

@@ -1,0 +1,25 @@
+{
+  "name": "General RAD report",
+  "sources": {
+    "header": "./header.ipynb",
+    "footer": "./footer.ipynb",
+    "imports": "./imports.ipynb"
+  },
+  "analysis": {
+    "rewardboard_overview": {
+      "type": "histogram",
+      "reward_system": "straight_distribution",
+      "source": "rewardboard"
+    },
+    "praise_histogram": {
+      "type": "histogram",
+      "reward_system": "praise",
+      "source": "tec_praise"
+    },
+    "epoch_praise_flow": {
+      "type": "praise_flow",
+      "reward_system": "praise",
+      "source": "tec_praise"
+    }
+  }
+}
