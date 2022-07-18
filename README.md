@@ -18,4 +18,5 @@
 - [Lots of refactor probably]Add the option to add config data to the notebook builder cells, so we can use parameters for stuff like praise flows
 - Hard praise flow refactor
 - Something in the praise flow makes a warning pop up when converting. figure out what it is
+- rating_distribution.py:  removing no-raters got lost somewhere. Redo
 

@@ -6,6 +6,21 @@
     "imports": "./imports.ipynb"
   },
   "analysis": {
+    "general_summary": {
+      "type": "report_summary",
+      "reward_system": "praise",
+      "source": "tec_praise"
+    },
+    "praise_score_distribution": {
+      "type": "rating_distribution",
+      "reward_system": "praise",
+      "source": "tec_praise"
+    },
+    "top_ten_praise": {
+      "type": "highest_rated_contributions",
+      "reward_system": "praise",
+      "source": "tec_praise"
+    },
     "rewardboard_overview": {
       "type": "histogram",
       "reward_system": "straight_distribution",
