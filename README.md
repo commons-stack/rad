@@ -15,8 +15,9 @@
 - In the Aragon export, allow to send a link in the config dict that substitutes IDs for addresses. Should come in handy for adding sourcecred
 - Research if there is a way to get rid of the rewardObjectBuilder class completely and natively handle new reward system objects.
 - Delete the template notebook after running it 
-- [Lots of refactor probably]Add the option to add config data to the notebook builder cells, so we can use parameters for stuff like praise flows
+- [Epic] [Lots of refactor probably]Add the option to add config data to the notebook builder cells, so we can use parameters for stuff like praise flows. The parameters will be specified in the report json file
 - Hard praise flow refactor
 - Something in the praise flow makes a warning pop up when converting. figure out what it is
 - rating_distribution.py:  removing no-raters got lost somewhere. Redo
-
+- allow to user to create their own templates in the folder the fork and store data in. (so they would only need to fork the rad without modifying anything, all changes would be in their "tec-reward" equivalent)
+- separate distirbution from reward-system-instance, to allow for different distribution algorithms [Epic] [Brainstorm]

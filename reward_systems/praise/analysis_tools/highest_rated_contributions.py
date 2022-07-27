@@ -76,7 +76,7 @@ def printGraph(praise_distribution_data):
 
     top10_table = f"\
 | Avg. score | To | Reason |\n \
-|:-----------|----|:-------|\n"
+|:-----------|----|-------:|\n"
     for kr, row in toppraise.iterrows():
         from_user = row["FROM USER ACCOUNT"]
         to_user = row["TO USER ACCOUNT"]
