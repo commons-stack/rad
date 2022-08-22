@@ -21,3 +21,11 @@
 - rating_distribution.py:  removing no-raters got lost somewhere. Redo
 - allow to user to create their own templates in the folder the fork and store data in. (so they would only need to fork the rad without modifying anything, all changes would be in their "tec-reward" equivalent)
 - separate distirbution from reward-system-instance, to allow for different distribution algorithms [Epic] [Brainstorm]
+
+
+ALTERNATIVE PARAMETER FORMAT: DATA AND DISTRIBUTION ARE separate
+This will to run different distributions on the same data, or combine several sources in the same distribution 
+- TO DO: paramters.json updated with new structure, redo rest:
+    -objects
+    -back and forth sending in the reports
+    -script that calls everything.
