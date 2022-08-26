@@ -66,10 +66,18 @@ def build_and_run(_templateName, _templateType, _data):
             + ".analysis_tools."
             + parameters["analysis"][analysis_module]["type"]
         )
+        # print(_data)
+        # print(parameters["analysis"][analysis_module]["source"])
+        # print(_data[parameters["analysis"][analysis_module]["source"]])
+        try:
+            buf_configuration = parameters["analysis"][analysis_module]["config"]
+        except KeyError:
+            buf_configuration = {}
 
         papermill_input[analysis_module] = {
             "module": module_path,
             "data": _data[parameters["analysis"][analysis_module]["source"]].__dict__,
+            "config": buf_configuration,
         }
 
         new_cells = build_module_cells(analysis_module)

@@ -34,13 +34,13 @@
       "distribution_amount": "2814",
       "user_dist_pct": 90,
       "quantifiers_dist_pct": 7,
-      "reward_dit_pct": 3,
+      "reward_dist_pct": 3,
       "payout_token": {
         "token_name": "TEC",
         "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
       }
     },
-    "quanifiers_dist": {
+    "quantifiers_dist": {
       "type": "straight",
       "sources": ["quantifiers"],
       "distribution_amount": "500",
@@ -51,19 +51,15 @@
     }
   },
   "reports": {
-    "basic_rewardboard_histogram": {
-      "type": "rewardboard_histogram",
-      "sources": ["rewardboard", "quantifiers"]
-    },
     "test_rad_report": {
       "type": "general_rad_report",
-      "sources": ["rewardboard", "tec_praise"]
+      "sources": ["tec_praise_dist"]
     }
   },
   "exports": {
     "rewardboard_aragon": {
       "type": "aragon_distribution",
-      "sources": ["rewardboard"]
+      "sources": ["tec_praise_dist"]
     },
     "quantifier_aragon": {
       "type": "aragon_distribution",
@@ -71,19 +67,19 @@
     },
     "combined_aragon": {
       "type": "aragon_distribution",
-      "sources": ["rewardboard", "quantifiers"]
+      "sources": ["tec_praise_dist", "quantifiers"]
     },
     "praise_results": {
       "type": "basic_distribution_results",
-      "sources": ["tec_praise"]
+      "sources": ["tec_praise_dist"]
     },
     "extended_praise_table": {
       "type": "extended_praise_data",
-      "sources": ["tec_praise"]
+      "sources": ["tec_praise_dist"]
     },
     "praise_forum_post": {
       "type": "forum_post",
-      "sources": ["tec_praise"]
+      "sources": ["tec_praise_dist"]
     }
   }
 }

@@ -1,9 +1,9 @@
 # PRAISE SYSTEM OBJECT
 
-# Instantiation of a praise round
+# Instantiation of a raw praise epoch
 
 #   constructor:
-#       -raw praise data and parameters -> executes reward distribution
+#       -raw praise data and parameters
 #   has functions to return:
 #       -praise distribution by user
 #       -dataframe where praise is sorted by quantifier
@@ -24,12 +24,6 @@ class Praise(RewardSystem):
         _quantAllowedValues,
         _duplicatePraiseValuation,
         _pseudonymsActive,
-        _distAmount,
-        _userRewardPct,
-        _quantifierRewardPct,
-        _tokenName,
-        _tokenAddress,
-        _distributionResults={},
     ):
         """
         The class constructor
@@ -52,15 +46,6 @@ class Praise(RewardSystem):
         self.quantAllowedValues = _quantAllowedValues
         self.duplicatePraiseValuation = float(_duplicatePraiseValuation)
         self.pseudonymsActive = bool(_pseudonymsActive)
-        self.userRewardPct = _userRewardPct
-        self.quantifierRewardPct = _quantifierRewardPct
-        self.distAmount = int(_distAmount)
-        self.tokenName = _tokenName
-        self.tokenAddress = _tokenAddress
-        self.distributionResults = _distributionResults
-
-        if _distributionResults == {}:
-            self.do_distribution()
 
     def __str__(self):
         """
@@ -73,6 +58,8 @@ class Praise(RewardSystem):
             str: A string describing the object and relevant state variables
 
         """
+
+        # [TODO] Redo for new format, right now it breaks
         return (
             "From str method of Praise: distAmount is % s, tokenName is % s, results are % s"
             % (self.distAmount, self.tokenName, str(self.distribution_results))
@@ -101,13 +88,6 @@ class Praise(RewardSystem):
         duplicatePraiseValuation = _params["duplicate_praise_valuation"]
         pseudonymsActive = _params["pseudonyms_used"]
 
-        distAmount = _params["distribution_amount"]
-        userRewardPct = _params["user_dist_pct"]
-        quantifierRewardPct = _params["quantifiers_dist_pct"]
-
-        tokenName = _params["payout_token"]["token_name"]
-        tokenAddress = _params["payout_token"]["token_address"]
-
         return cls(
             _name=_objectName,
             _dataTable=dataTable,
@@ -115,11 +95,6 @@ class Praise(RewardSystem):
             _quantAllowedValues=quantAllowedValues,
             _duplicatePraiseValuation=duplicatePraiseValuation,
             _pseudonymsActive=pseudonymsActive,
-            _distAmount=distAmount,
-            _userRewardPct=userRewardPct,
-            _quantifierRewardPct=quantifierRewardPct,
-            _tokenName=tokenName,
-            _tokenAddress=tokenAddress,
         )
 
     @classmethod

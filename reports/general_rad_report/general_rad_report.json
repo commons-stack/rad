@@ -9,32 +9,35 @@
     "general_summary": {
       "type": "report_summary",
       "reward_system": "praise",
-      "source": "tec_praise"
+      "source": "tec_praise_dist"
     },
     "praise_score_distribution": {
       "type": "rating_distribution",
       "reward_system": "praise",
-      "source": "tec_praise"
+      "source": "tec_praise_dist"
     },
     "top_ten_praise": {
       "type": "highest_rated_contributions",
       "reward_system": "praise",
-      "source": "tec_praise"
+      "source": "tec_praise_dist"
     },
     "rewardboard_overview": {
       "type": "histogram",
-      "reward_system": "straight_distribution",
-      "source": "rewardboard"
+      "reward_system": "praise",
+      "source": "tec_praise_dist",
+      "config": {
+        "onlyRewardboard": true
+      }
     },
     "praise_histogram": {
       "type": "histogram",
       "reward_system": "praise",
-      "source": "tec_praise"
+      "source": "tec_praise_dist"
     },
     "epoch_praise_flow": {
       "type": "praise_flow",
       "reward_system": "praise",
-      "source": "tec_praise"
+      "source": "tec_praise_dist"
     }
   }
 }

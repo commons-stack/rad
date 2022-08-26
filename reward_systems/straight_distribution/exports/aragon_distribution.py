@@ -1,6 +1,6 @@
 # this script returns a aragon-compatible dataframe for the exporter
 import pandas as pd
-from ..straightDistribution import StraightDistribution
+from ..straightRewards import StraightDistribution
 
 
 def run_export(_data, _config={}):

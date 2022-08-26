@@ -1,1 +1,1 @@
-from .straightDistribution import StraightDistribution
+from .straightRewards import StraightRewards
