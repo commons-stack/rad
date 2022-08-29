@@ -14,6 +14,10 @@ class StraightDistribution(RewardDistribution):
         self,
         _name,
         _beneficiaries,
+        _distAmount,
+        _tokenName,
+        _tokenAddress,
+        _distributionResults={},
     ):
         """
         The class constructor
@@ -32,6 +36,13 @@ class StraightDistribution(RewardDistribution):
         """
         super().__init__(_name, "straight_distribution")
         self.beneficiaries = _beneficiaries
+        self.totalDistAmount = int(_distAmount)
+        self.tokenName = _tokenName
+        self.tokenAddress = _tokenAddress
+        self.distributionResults = _distributionResults
+
+        if _distributionResults == {}:
+            self.do_distribution()
 
     def __str__(self):
         """
@@ -71,9 +82,16 @@ class StraightDistribution(RewardDistribution):
         # lets pipe this through pandas to be sure we don't run into issues
         beneficiaries = pd.DataFrame.to_dict(beneficiaries_input)
 
+        distAmount = _params["distribution_amount"]
+        tokenName = _params["payout_token"]["token_name"]
+        tokenAddress = _params["payout_token"]["token_address"]
+
         return cls(
             _name=_objectName,
             _beneficiaries=beneficiaries,
+            _distAmount=distAmount,
+            _tokenName=tokenName,
+            _tokenAddress=tokenAddress,
         )
 
     @classmethod
@@ -92,10 +110,12 @@ class StraightDistribution(RewardDistribution):
         """
         name = _dict["name"]
         beneficiaries = _dict["beneficiaries"]
+        distributionResults = _dict["distributionResults"]
 
         return cls(
             _name=name,
             _beneficiaries=beneficiaries,
+            _distributionResults=distributionResults,
         )
 
     def do_distribution(self) -> None:

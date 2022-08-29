@@ -63,11 +63,11 @@
     },
     "quantifier_aragon": {
       "type": "aragon_distribution",
-      "sources": ["quantifiers"]
+      "sources": ["quantifiers_dist"]
     },
     "combined_aragon": {
       "type": "aragon_distribution",
-      "sources": ["tec_praise_dist", "quantifiers"]
+      "sources": ["tec_praise_dist", "quantifiers_dist"]
     },
     "praise_results": {
       "type": "basic_distribution_results",

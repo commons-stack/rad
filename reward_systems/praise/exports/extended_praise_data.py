@@ -15,7 +15,7 @@ def run_export(_data, _config={}):
             nothing, just saves the files
     """
 
-    extended_praise_table = pd.DataFrame(_data.dataTable)
+    extended_praise_table = pd.DataFrame(_data.praiseTable)
     final_allocation_csv = extended_praise_table.to_csv(sep=",", index=False)
 
     return final_allocation_csv, ".csv"
