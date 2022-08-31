@@ -73,7 +73,6 @@ class StraightDistribution(RewardDistribution):
             cls: an instance of the class with the specified parameters
 
         """
-        # [TODO] prepare for receiving multiple sources and combining them
         beneficiaries_input = pd.DataFrame()
         for obj in _sources:
             beneficiaries_input = pd.concat(
