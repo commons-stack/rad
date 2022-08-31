@@ -26,10 +26,3 @@
 - [ ] "full praise table" export
 
 
-DONE: 
-ALTERNATIVE PARAMETER FORMAT: DATA AND DISTRIBUTION ARE separate
-This will to run different distributions on the same data, or combine several sources in the same distribution 
-- TO DO: paramters.json updated with new structure, redo rest:
-    -objects
-    -back and forth sending in the reports
-    -script that calls everything.
