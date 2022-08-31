@@ -4,7 +4,7 @@
 * run "python main.py -p test_data/"
 
 
-#Current TO DOs:
+# Current TO DOs:
 - [ ] [Epic] Go through all functions and implement error checking/ raising
 - [ ] Review file output structure. Righ now it all goes into the folder called "my_reports"
 - [ ] Specify jupyter kernel and other basic info in the notebook creation step (currently done by papermill in runtime, which makes re-running the notebooks as standalone fail)
