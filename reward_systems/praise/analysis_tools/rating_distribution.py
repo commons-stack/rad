@@ -27,6 +27,7 @@ def run(praise_distribution_data, _config={}):
 
     # clear out the quantifiers who didn't give any rating (i.e. all scores are 0)
     quantifier_rating_table = praise_distribution.get_data_by_quantifier()
+
     quantifier_sum = (
         quantifier_rating_table[["QUANT_ID", "QUANT_VALUE"]].groupby("QUANT_ID").sum()
     )

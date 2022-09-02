@@ -120,12 +120,6 @@ class Praise(RewardSystem):
         quantAllowedValues = _dict["quantAllowedValues"]
         duplicatePraiseValuation = _dict["duplicatePraiseValuation"]
         pseudonymsActive = _dict["pseudonymsActive"]
-        userRewardPct = _dict["userRewardPct"]
-        quantifierRewardPct = _dict["quantifierRewardPct"]
-        distAmount = _dict["distAmount"]
-        tokenName = _dict["tokenName"]
-        tokenAddress = _dict["tokenAddress"]
-        distributionResults = _dict["distributionResults"]
 
         return cls(
             _name=name,
@@ -134,91 +128,19 @@ class Praise(RewardSystem):
             _quantAllowedValues=quantAllowedValues,
             _duplicatePraiseValuation=duplicatePraiseValuation,
             _pseudonymsActive=pseudonymsActive,
-            _distAmount=distAmount,
-            _userRewardPct=userRewardPct,
-            _quantifierRewardPct=quantifierRewardPct,
-            _tokenName=tokenName,
-            _tokenAddress=tokenAddress,
-            _distributionResults=distributionResults,
         )
 
-    def do_distribution(self) -> None:
+    def get_praise_by_user(self):
         """
-        Performs the reward distribution and saves it in object state under self.distribution results
-
+        Returns a DataFrame of the total praise score received by each user
         Args:
-            (self): the object with initialized parameters
+           - None
         Raises:
             [TODO]: Check for errors and raise them
         Returns:
-            nothing. Changes local state of the object
-
+            praise_by_user: DataFrame containing name, address, total praise points and corresponding % for all users
 
         """
-
-        # calc praise rewards
-        # WILL PROBABLY NEED DEBUGGING  -> seems to work
-
-        # calculate praise rewards and update the datatable
-
-        praiseTokenAmount = self.distAmount * self.userRewardPct / 100
-
-        praise_distribution = self.calc_praise_rewards(
-            pd.DataFrame(self.dataTable), praiseTokenAmount
-        )
-
-        self.dataTable = pd.DataFrame.to_dict(praise_distribution)
-
-        # Generate the final allocation including quant rewards and save it as distribution results
-        quantTokenAmount = self.distAmount * self.quantifierRewardPct / 100
-
-        praise_by_user = self.get_praise_by_user()
-        quantifier_rating_table = self.get_data_by_quantifier()
-
-        quant_rewards = self.calc_quantifier_rewards(
-            quantifier_rating_table.copy(), quantTokenAmount
-        )
-
-        final_token_allocations = self.prepare_merged_reward_table(
-            praise_by_user.copy(), quant_rewards.copy()
-        )
-
-        self.distributionResults = pd.DataFrame.to_dict(final_token_allocations)
-
-        # exports we want to build:
-        # extended praise
-        # final praise alloc
-        # aragon_dist
-
-        # print(quant_rewards)
-
-        # save to file for testing purposes
-        # filename = "TEST_PRAISE_EXPORT.csv"
-        # final_allocation_csv = final_token_allocations.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
-
-        # filename = "TEST_QUANT_EXPORT.csv"
-        # final_allocation_csv = quant_rewards.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
-
-        # filename = "TEST_EXTENDED_EXPORT.csv"
-        # final_allocation_csv = praise_distribution.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
-
-    def calc_praise_rewards(self, praiseData, tokensToDistribute):
-        # we discard all we don't need and and calculate the % worth of each praise
-
-        totalPraisePoints = praiseData["AVG SCORE"].sum()
-
-        praiseData["PERCENTAGE"] = praiseData["AVG SCORE"] / totalPraisePoints
-        praiseData["TOKEN TO RECEIVE"] = praiseData["PERCENTAGE"] * tokensToDistribute
-
-        return praiseData
-
-    def get_praise_by_user(self):
 
         praiseData = pd.DataFrame(self.dataTable)
 
@@ -233,7 +155,6 @@ class Praise(RewardSystem):
                     "USER ADDRESS",
                     "AVG SCORE",
                     "PERCENTAGE",
-                    "TOKEN TO RECEIVE",
                 ]
             ]
             .copy()
@@ -244,39 +165,17 @@ class Praise(RewardSystem):
 
         return praise_by_user
 
-    def calc_quantifier_rewards(self, quantifierData, tokensToDistribute):
-        quantifier_sum = (
-            quantifierData[["QUANT_ID", "QUANT_VALUE"]].groupby("QUANT_ID").sum()
-        )
-        norating_quantifiers = quantifier_sum.loc[
-            quantifier_sum["QUANT_VALUE"] == 0
-        ].index.tolist()
-
-        quantifier_rewards = pd.DataFrame(
-            quantifierData[["QUANT_ID", "QUANT_ADDRESS"]]
-            .value_counts()
-            .reset_index()
-            .copy()
-        )
-
-        quantifier_rewards = quantifier_rewards[
-            ~quantifier_rewards["QUANT_ID"].isin(norating_quantifiers)
-        ]
-
-        quantifier_rewards = quantifier_rewards.rename(
-            columns={quantifier_rewards.columns[2]: "NUMBER_OF_PRAISES"}
-        ).reset_index(drop=True)
-
-        total_praise_quantified = quantifier_rewards["NUMBER_OF_PRAISES"].sum()
-        quantifier_rewards["TOKEN TO RECEIVE"] = (
-            quantifier_rewards["NUMBER_OF_PRAISES"]
-            / total_praise_quantified
-            * tokensToDistribute
-        )
-
-        return quantifier_rewards
-
     def get_data_by_quantifier(self):
+        """
+        Returns a DataFrame of the praise sorted by quantifier
+        Args:
+           - None
+        Raises:
+            [TODO]: Check for errors and raise them
+        Returns:
+            quant_only: DataFrame containing name, address and score given by that quantifier for all praise
+
+        """
 
         praise_data = pd.DataFrame(self.dataTable)
 
@@ -315,64 +214,3 @@ class Praise(RewardSystem):
         quant_only.sort_values(["QUANT_ID", "PRAISE_ID"], inplace=True)
         quant_only = quant_only.reindex(columns=columnsTitles).reset_index(drop=True)
         return quant_only
-
-    # def return_total_data_chart
-    def prepare_merged_reward_table(self, praise_rewards, quantifier_rewards):
-
-        praise_rewards = praise_rewards.copy()[
-            ["USER IDENTITY", "USER ADDRESS", "TOKEN TO RECEIVE"]
-        ].rename(columns={"TOKEN TO RECEIVE": "PRAISE_REWARD"})
-        praise_rewards["USER ADDRESS"] = praise_rewards["USER ADDRESS"].str.lower()
-
-        quantifier_rewards.rename(
-            columns={
-                "QUANT_ADDRESS": "USER ADDRESS",
-                "QUANT_ID": "USER IDENTITY",
-                "NUMBER_OF_PRAISES": "NR_OF_PRAISES_QUANTIFIED",
-                "TOKEN TO RECEIVE": "QUANT_REWARD",
-            },
-            inplace=True,
-        )
-        quantifier_rewards["USER ADDRESS"] = quantifier_rewards[
-            "USER ADDRESS"
-        ].str.lower()
-
-        final_allocations = pd.merge(
-            praise_rewards,
-            quantifier_rewards,
-            on=["USER ADDRESS", "USER ADDRESS"],
-            how="outer",
-        )
-
-        # now we can merge the IDs, replacing any missing values
-        final_allocations["USER IDENTITY_x"] = final_allocations[
-            "USER IDENTITY_x"
-        ].combine_first(final_allocations["USER IDENTITY_y"])
-        final_allocations.rename(
-            columns={"USER IDENTITY_x": "USER IDENTITY"}, inplace=True
-        )
-        final_allocations.drop("USER IDENTITY_y", axis=1, inplace=True)
-
-        final_allocations["USER IDENTITY"].fillna("missing username", inplace=True)
-        final_allocations.fillna(0, inplace=True)
-        final_allocations["TOTAL TO RECEIVE"] = (
-            final_allocations["PRAISE_REWARD"] + final_allocations["QUANT_REWARD"]
-        )
-
-        final_allocations = final_allocations.sort_values(
-            by="TOTAL TO RECEIVE", ascending=False
-        ).reset_index(drop=True)
-
-        # put the columns into the desired order
-        final_allocations = final_allocations[
-            [
-                "USER IDENTITY",
-                "USER ADDRESS",
-                "PRAISE_REWARD",
-                "QUANT_REWARD",
-                "NR_OF_PRAISES_QUANTIFIED",
-                "TOTAL TO RECEIVE",
-            ]
-        ]
-
-        return final_allocations

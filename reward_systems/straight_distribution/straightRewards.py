@@ -17,10 +17,6 @@ class StraightRewards(RewardSystem):
 
         Args:
             _benficiaries: list of the users participating in the reward system
-            _distAmount: number, the amount of tokens to be distributed
-            _tokenName: string indicating the name of the token the rewards will be paid out in
-            _tokenAddress: the address of the reward token
-            _distributionResults: Optional. Dictionary containing the results of a distribution.
         Raises:
             [TODO]: Check for errors and raise them
         Returns:
@@ -42,8 +38,8 @@ class StraightRewards(RewardSystem):
 
         """
         return (
-            "From str method of StrightDistr: totalDistAmount is % s, tokenName is % s, results are % s"
-            % (self.totalDistAmount, self.tokenName, str(self.distribution_results))
+            "This is a Straight Distribution Object. It contains a list of % s beneficiaries"
+            % (len(self.beneficiaries))
         )
 
     @classmethod
@@ -89,23 +85,3 @@ class StraightRewards(RewardSystem):
             _name=name,
             _beneficiaries=beneficiaries,
         )
-
-    def do_distribution(self) -> None:
-        """
-        Performs the reward distribution and saves it in object state under self.distribution results
-
-        Args:
-            (self): the object with initialized parameters
-        Raises:
-            [TODO]: Check for errors and raise them
-        Returns:
-            nothing. Changes local state of the object
-
-
-        """
-
-        dist_results = pd.DataFrame.from_dict(self.beneficiaries)
-        dist_results["AMOUNT TO RECEIVE"] = self.totalDistAmount / len(
-            dist_results.index
-        )
-        self.distributionResults = pd.DataFrame.to_dict(dist_results)

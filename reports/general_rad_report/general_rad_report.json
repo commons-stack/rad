@@ -5,6 +5,10 @@
     "footer": "./footer.ipynb",
     "imports": "./imports.ipynb"
   },
+  "execution_specs": {
+    "kernel_name": "python",
+    "language": "python"
+  },
   "analysis": {
     "general_summary": {
       "type": "report_summary",
