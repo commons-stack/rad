@@ -13,10 +13,12 @@
 #   -cleans up
 
 
-import argparse, os
+import argparse
+import os
 import pandas as pd
 import numpy as np
 import json
+import shutil
 
 import reward_systems.rewardObjectBuilder as objBuilder
 import reward_systems.distributionObjectBuilder as distBuilder
@@ -94,17 +96,20 @@ def run_rad(_inputPath):
                 pass
             else:
                 file_destination = _inputPath + "/my_reports/" + output_file
-                os.rename(output_file, file_destination)
+                shutil.copy(output_file, file_destination)
+                os.remove(output_file)
 
         if output_file.endswith(".html"):
             file_destination = _inputPath + "/my_reports/" + output_file
-            os.rename(output_file, file_destination)
+            shutil.copy(output_file, file_destination)
+            os.remove(output_file)
 
         if output_file.endswith(".ipynb"):
             file_destination = _inputPath + "/my_reports/" + output_file
-            os.rename(output_file, file_destination)
+            shutil.copy(output_file, file_destination)
+            os.remove(output_file)
 
-    print("========= DONE ==========")
+    print("========= DONE ==========") 
 
 
 if __name__ == "__main__":
@@ -123,4 +128,4 @@ if __name__ == "__main__":
     # quick conveniency check
     input_path = input_path if input_path[-1] == "/" else (input_path + "/")
 
-    run_rad(input_path)
+    run_rad(input_path) 
