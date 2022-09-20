@@ -3,7 +3,7 @@
 
 import pandas as pd
 
-from src.rewardSystem import RewardSystem
+from ..rewardSystem import RewardSystem
 
 
 class StraightRewards(RewardSystem):

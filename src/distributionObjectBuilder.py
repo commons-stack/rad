@@ -1,10 +1,10 @@
 # from . import *
 
-from .straight_distribution.distributions.straightDistribution import (
+from ..sources.straight_distribution.distributions.straightDistribution import (
     StraightDistribution,
 )
 
-from reward_systems.praise.distributions.standard_praise import PraiseDistribution
+from sources.praise.distributions.standard_praise import PraiseDistribution
 
 
 # from .straight_distribution import StraightDistribution

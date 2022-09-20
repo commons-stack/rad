@@ -1,4 +1,5 @@
-from ..distributions.standard_praise import PraiseDistribution
+from importlib.metadata import distribution
+from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
 import pandas as pd
 from IPython.display import Markdown, display
@@ -25,7 +26,8 @@ def run(praise_distribution_data, _config={}):
 
     """
     # print(praise_distribution_data)
-    distribution = PraiseDistribution.generate_from_dict(praise_distribution_data)
+    # distribution = PraiseDistribution.generate_from_dict(praise_distribution_data)
+    distribution = praise_distribution_data
     res = distribution.distributionResults
 
     return res
@@ -43,7 +45,8 @@ def printDescription(praise_distribution_data, _config={}):
         nothing, it prints the texts
 
     """
-    name = praise_distribution_data["name"]
+    # name = praise_distribution_data["name"]
+    name = praise_distribution_data.name
     header = f'# "{name}" Histogram'
     description = f"This is a histogram of the **{ name }** object. It's stored in /reward_systems/straight_distribution as a regular python module. Apart from perfoming the analysis, it can also output a visual representation with a specific header (above) and description text. "
 

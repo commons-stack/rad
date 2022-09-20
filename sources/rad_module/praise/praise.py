@@ -11,8 +11,9 @@
 
 from tokenize import Number
 import pandas as pd
-
-from src.rewardSystem import RewardSystem
+import json
+import os
+from ..rewardSystem import RewardSystem
 
 
 class Praise(RewardSystem):
@@ -129,6 +130,20 @@ class Praise(RewardSystem):
             _duplicatePraiseValuation=duplicatePraiseValuation,
             _pseudonymsActive=pseudonymsActive,
         )
+
+    @classmethod
+    def load_from_json(cls, _path):
+        params = {}
+        with open(_path, "r") as read_file:
+            params = json.load(read_file)
+
+        _path = os.path.split(_path)
+
+        params["input_files"]["praise_data"] = os.path.abspath(
+            os.path.join(_path[0], params["input_files"]["praise_data"])
+        )
+
+        return cls.generate_from_params(params["name"], params)
 
     def get_praise_by_user(self):
         """

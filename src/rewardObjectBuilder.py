@@ -1,6 +1,6 @@
 # from . import *
-from reward_systems.praise.praise import Praise
-from .straight_distribution import *
+from sources.praise.praise import Praise
+from ..sources.straight_distribution import *
 
 # from .straight_distribution import StraightDistribution
 # from .sourcecred import Sourcecred

@@ -20,8 +20,8 @@ import numpy as np
 import json
 import shutil
 
-import reward_systems.rewardObjectBuilder as objBuilder
-import reward_systems.distributionObjectBuilder as distBuilder
+import rewardObjectBuilder as objBuilder
+import distributionObjectBuilder as distBuilder
 import src.notebookbuilder as nbBuilder
 import src.exporter as exportBuilder
 
@@ -109,7 +109,7 @@ def run_rad(_inputPath):
             shutil.copy(output_file, file_destination)
             os.remove(output_file)
 
-    print("========= DONE ==========") 
+    print("========= DONE ==========")
 
 
 if __name__ == "__main__":
@@ -128,4 +128,4 @@ if __name__ == "__main__":
     # quick conveniency check
     input_path = input_path if input_path[-1] == "/" else (input_path + "/")
 
-    run_rad(input_path) 
+    run_rad(input_path)

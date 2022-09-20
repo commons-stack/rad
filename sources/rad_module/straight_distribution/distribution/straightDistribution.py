@@ -4,9 +4,9 @@
 import pandas as pd
 
 
-from src.rewardDistribution import RewardDistribution
-from reward_systems.praise import Praise
-from reward_systems.straight_distribution.straightRewards import StraightRewards
+from ...rewardDistribution import RewardDistribution
+from praise import Praise
+from straight_distribution.straightRewards import StraightRewards
 
 
 class StraightDistribution(RewardDistribution):

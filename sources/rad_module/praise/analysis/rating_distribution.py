@@ -1,4 +1,4 @@
-from ..distributions.standard_praise import PraiseDistribution
+from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
 import pandas as pd
 from IPython.display import Markdown, display
@@ -21,9 +21,9 @@ def run(praise_distribution_data, _config={}):
         res: a DataFrame with the requested results. Contains two columns, "QUANT_VALUE" and "COUNTS"
 
     """
-    praise_distribution = PraiseDistribution.generate_from_dict(
-        praise_distribution_data
-    )
+    # praise_distribution = PraiseDistribution.generate_from_dict(praise_distribution_data)
+
+    praise_distribution = praise_distribution_data
 
     # clear out the quantifiers who didn't give any rating (i.e. all scores are 0)
     quantifier_rating_table = praise_distribution.get_data_by_quantifier()
@@ -59,7 +59,8 @@ def printDescription(praise_distribution_data, _config={}):
         nothing, it prints the texts
 
     """
-    name = praise_distribution_data["name"]
+    # name = praise_distribution_data["name"]
+    name = praise_distribution_data.name
     header = f"### Rating distribution"
     description = f"Since praise gets valued on a scale, we can take a look at how often each value of the scale gets assigned by quantifiers. Note: This metric disregards scores of praise marked as a duplicate, since the score of the original is already being taken into account."
 
