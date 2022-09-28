@@ -48,6 +48,8 @@ class Praise(RewardSystem):
         self.duplicatePraiseValuation = float(_duplicatePraiseValuation)
         self.pseudonymsActive = bool(_pseudonymsActive)
 
+        self.calc_percentages()
+
     def __str__(self):
         """
         A stringified description of the object
@@ -62,8 +64,8 @@ class Praise(RewardSystem):
 
         # [TODO] Redo for new format, right now it breaks
         return (
-            "From str method of Praise: distAmount is % s, tokenName is % s, results are % s"
-            % (self.distAmount, self.tokenName, str(self.distribution_results))
+            "From str method of Praise: quantPerPraise is % s, duplicate Praise valuation is % s"
+            % (self.quantPerPraise, self.duplicatePraiseValuation)
         )
 
     @classmethod
@@ -144,6 +146,15 @@ class Praise(RewardSystem):
         )
 
         return cls.generate_from_params(params["name"], params)
+
+    def calc_percentages(self):
+
+        pctTable = pd.DataFrame(self.dataTable)
+
+        totalPraisePoints = pctTable["AVG SCORE"].sum()
+        pctTable["PERCENTAGE"] = pctTable["AVG SCORE"] / totalPraisePoints
+
+        self.dataTable = pctTable.to_dict()
 
     def get_praise_by_user(self):
         """

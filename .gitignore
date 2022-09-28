@@ -3,3 +3,4 @@ __pycache__/
 .pyc
 
 test_data/period-1/my_reports/
+test_data/round-17/distribution_results/

@@ -1,4 +1,4 @@
-from ..distributions.standard_praise import PraiseDistribution
+from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
 import pandas as pd
 
@@ -29,6 +29,7 @@ def run(praise_distribution_data, _config={}):
         res: a DataFrame with the requested results. Contains two columns, "ID" and "AMOUNT TO RECEIVE"
 
     """
+    # TODO adapt to praiseDist Object (see histogram)
 
     # [TODO]  Hard Refactor
 
@@ -100,7 +101,7 @@ def printDescription(praise_distribution_data, _config={}):
         nothing, it prints the texts
 
     """
-    name = praise_distribution_data["name"]
+    name = praise_distribution_data.name
     header = f'# "{name}" Praise flows'
     description = f"This is the praise flow of **{ name }**."
 

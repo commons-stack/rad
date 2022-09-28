@@ -1,4 +1,4 @@
-from ..distributions.standard_praise import PraiseDistribution
+from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
 import pandas as pd
 from IPython.display import Markdown, display
@@ -25,6 +25,8 @@ def run(praise_distribution_data, _config={}):
 
     """
 
+    # TODO adapt to praiseDist Object (see histogram)
+
     praise_distribution = PraiseDistribution.generate_from_dict(
         praise_distribution_data
     )
@@ -50,7 +52,7 @@ def printDescription(praise_distribution_data, _config={}):
         nothing, it prints the texts
 
     """
-    name = praise_distribution_data["name"]
+    name = praise_distribution_data.name
     header = f"### Top 10 highest rated contributions"
     description = (
         f"The ten highest rated contributions for this round were the following:"

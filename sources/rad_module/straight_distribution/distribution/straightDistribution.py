@@ -5,8 +5,7 @@ import pandas as pd
 
 
 from ...rewardDistribution import RewardDistribution
-from praise import Praise
-from straight_distribution.straightRewards import StraightRewards
+from ..straightRewards import StraightRewards
 
 
 class StraightDistribution(RewardDistribution):
@@ -57,7 +56,7 @@ class StraightDistribution(RewardDistribution):
         """
         return (
             "From str method of StrightDistr: totalDistAmount is % s, tokenName is % s, results are % s"
-            % (self.totalDistAmount, self.tokenName, str(self.distribution_results))
+            % (self.totalDistAmount, self.tokenName, str(self.distributionResults))
         )
 
     @classmethod

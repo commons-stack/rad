@@ -20,12 +20,8 @@ class PraiseDistribution(RewardDistribution):
     def __init__(
         self,
         _name,
-        _praiseTable,
-        _rewardboard,
-        _quantPerPraise,
-        _quantAllowedValues,
-        _duplicatePraiseValuation,
-        _pseudonymsActive,
+        _praiseInstance,
+        _rewardboardInstance,
         _distAmount,
         _userRewardPct,
         _quantifierRewardPct,
@@ -50,12 +46,9 @@ class PraiseDistribution(RewardDistribution):
 
         """
         super().__init__(_name, "praise")
-        self.praiseTable = _praiseTable
-        self.rewardboard = _rewardboard
-        self.quantPerPraise = int(_quantPerPraise)
-        self.quantAllowedValues = _quantAllowedValues
-        self.duplicatePraiseValuation = float(_duplicatePraiseValuation)
-        self.pseudonymsActive = bool(_pseudonymsActive)
+        self.praiseInstance = _praiseInstance
+        self.rewardboardInstance = _rewardboardInstance
+
         self.userRewardPct = _userRewardPct
         self.quantifierRewardPct = _quantifierRewardPct
         self.rewardboardRewardPct = _rewardboardRewardPct
@@ -80,7 +73,7 @@ class PraiseDistribution(RewardDistribution):
         """
         return (
             "From str method of Praise: distAmount is % s, tokenName is % s, results are % s"
-            % (self.distAmount, self.tokenName, str(self.distribution_results))
+            % (self.distAmount, self.tokenName, str(self.distributionResults))
         )
 
     @classmethod
@@ -107,14 +100,6 @@ class PraiseDistribution(RewardDistribution):
             if _sources[obj].type == "straight_distribution" and rewardObj == {}:
                 rewardObj = _sources[obj]
 
-        quantPerPraise = praiseObj.quantPerPraise
-        quantAllowedValues = praiseObj.quantAllowedValues
-        duplicatePraiseValuation = praiseObj.duplicatePraiseValuation
-        pseudonymsActive = praiseObj.pseudonymsActive
-
-        praiseTable = praiseObj.dataTable
-        rewardboard = rewardObj.beneficiaries
-
         distAmount = _params["distribution_amount"]
         userRewardPct = _params["user_dist_pct"]
         quantifierRewardPct = _params["quantifiers_dist_pct"]
@@ -125,12 +110,8 @@ class PraiseDistribution(RewardDistribution):
 
         return cls(
             _name=_objectName,
-            _praiseTable=praiseTable,
-            _rewardboard=rewardboard,
-            _quantPerPraise=quantPerPraise,
-            _quantAllowedValues=quantAllowedValues,
-            _duplicatePraiseValuation=duplicatePraiseValuation,
-            _pseudonymsActive=pseudonymsActive,
+            _praiseInstance=praiseObj,
+            _rewardboardInstance=rewardObj,
             _distAmount=distAmount,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
@@ -157,12 +138,9 @@ class PraiseDistribution(RewardDistribution):
         # REDO with new structure
 
         name = _dict["name"]
-        praiseTable = _dict["praiseTable"]
-        rewardboard = _dict["rewardboard"]
-        quantPerPraise = _dict["quantPerPraise"]
-        quantAllowedValues = _dict["quantAllowedValues"]
-        duplicatePraiseValuation = _dict["duplicatePraiseValuation"]
-        pseudonymsActive = _dict["pseudonymsActive"]
+        praiseObj = _dict["praiseInstance"]
+        rewardboardObj = _dict["rewardboardInstance"]
+
         userRewardPct = _dict["userRewardPct"]
         quantifierRewardPct = _dict["quantifierRewardPct"]
         rewardboardRewardPct = _dict["rewardboardRewardPct"]
@@ -173,12 +151,8 @@ class PraiseDistribution(RewardDistribution):
 
         return cls(
             _name=name,
-            _praiseTable=praiseTable,
-            _rewardboard=rewardboard,
-            _quantPerPraise=quantPerPraise,
-            _quantAllowedValues=quantAllowedValues,
-            _duplicatePraiseValuation=duplicatePraiseValuation,
-            _pseudonymsActive=pseudonymsActive,
+            _praiseTable=praiseObj,
+            _rewardboard=rewardboardObj,
             _distAmount=distAmount,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
@@ -210,24 +184,21 @@ class PraiseDistribution(RewardDistribution):
         # calculate praise rewards and update the datatable
 
         praiseTokenAmount = self.distAmount * self.userRewardPct / 100
-
-        praise_distribution = self.calc_praise_rewards(
-            pd.DataFrame(self.praiseTable), praiseTokenAmount
-        )
-
-        self.praiseTable = pd.DataFrame.to_dict(praise_distribution)
-
-        # Generate the final allocation including quant rewards and save it as distribution results
         quantTokenAmount = self.distAmount * self.quantifierRewardPct / 100
 
-        praise_by_user = self.get_praise_by_user()
-        quantifier_rating_table = self.get_data_by_quantifier()
+        praise_by_user = self.praiseInstance.get_praise_by_user()
+
+        praise_by_user["TOKEN TO RECEIVE"] = (
+            praise_by_user["PERCENTAGE"] * praiseTokenAmount
+        )
+
+        quantifier_rating_table = self.praiseInstance.get_data_by_quantifier()
 
         quant_rewards = self.calc_quantifier_rewards(
             quantifier_rating_table.copy(), quantTokenAmount
         )
 
-        # generate rewardboard rewars here and send them to the next method
+        # generate rewardboard rewards here and send them to the next method
 
         final_token_allocations = self.prepare_merged_reward_table(
             praise_by_user.copy(), quant_rewards.copy()
@@ -257,42 +228,6 @@ class PraiseDistribution(RewardDistribution):
         # final_allocation_csv = praise_distribution.to_csv(sep=",", index=False)
         # with open(filename, "w") as f:
         #     f.write(final_allocation_csv)
-
-    def calc_praise_rewards(self, praiseData, tokensToDistribute):
-        # we discard all we don't need and and calculate the % worth of each praise
-
-        totalPraisePoints = praiseData["AVG SCORE"].sum()
-
-        praiseData["PERCENTAGE"] = praiseData["AVG SCORE"] / totalPraisePoints
-        praiseData["TOKEN TO RECEIVE"] = praiseData["PERCENTAGE"] * tokensToDistribute
-
-        return praiseData
-
-    def get_praise_by_user(self):
-
-        praiseData = pd.DataFrame(self.praiseTable)
-
-        praiseData.rename(columns={"TO USER ACCOUNT": "USER IDENTITY"}, inplace=True)
-        praiseData.rename(columns={"TO ETH ADDRESS": "USER ADDRESS"}, inplace=True)
-        praiseData["USER ADDRESS"].fillna("MISSING USER ADDRESS", inplace=True)
-
-        praise_by_user = (
-            praiseData[
-                [
-                    "USER IDENTITY",
-                    "USER ADDRESS",
-                    "AVG SCORE",
-                    "PERCENTAGE",
-                    "TOKEN TO RECEIVE",
-                ]
-            ]
-            .copy()
-            .groupby(["USER IDENTITY", "USER ADDRESS"])
-            .agg("sum")
-            .reset_index()
-        )
-
-        return praise_by_user
 
     def calc_quantifier_rewards(self, quantifierData, tokensToDistribute):
         quantifier_sum = (
@@ -325,46 +260,6 @@ class PraiseDistribution(RewardDistribution):
         )
 
         return quantifier_rewards
-
-    def get_data_by_quantifier(self):
-
-        praise_data = pd.DataFrame(self.praiseTable)
-
-        quant_only = pd.DataFrame()
-        # praise_data.drop(['DATE', 'TO USER ACCOUNT', 'TO USER ACCOUNT ID', 'TO ETH ADDRESS', 'FROM USER ACCOUNT', 'FROM USER ACCOUNT ID', 'FROM ETH ADDRESS', 'REASON', 'SOURCE ID', 'SOURCE NAME', 'AVG SCORE'], axis=1, inplace=True)
-        num_of_quants = self.quantPerPraise
-        for i in range(num_of_quants):
-            q_name = str("QUANTIFIER " + str(i + 1) + " USERNAME")
-            q_addr = str("QUANTIFIER " + str(i + 1) + " ETH ADDRESS")
-            q_value = str("SCORE " + str(i + 1))
-            q_duplicate = str("DUPLICATE ID " + str(i + 1))
-
-            buf = praise_data[["ID", q_name, q_addr, q_value, q_duplicate]].copy()
-
-            # delete the duplicated rows
-            buf = buf.loc[
-                buf[q_duplicate].isnull()
-            ]  # only include the non-duplicated rows
-            buf = buf[
-                ["ID", q_name, q_addr, q_value]
-            ]  # don't need the duplication info anymore
-
-            buf.rename(
-                columns={
-                    q_name: "QUANT_ID",
-                    q_addr: "QUANT_ADDRESS",
-                    q_value: "QUANT_VALUE",
-                    "ID": "PRAISE_ID",
-                },
-                inplace=True,
-            )
-
-            quant_only = quant_only.append(buf.copy(), ignore_index=True)
-
-        columnsTitles = ["QUANT_ID", "QUANT_ADDRESS", "PRAISE_ID", "QUANT_VALUE"]
-        quant_only.sort_values(["QUANT_ID", "PRAISE_ID"], inplace=True)
-        quant_only = quant_only.reindex(columns=columnsTitles).reset_index(drop=True)
-        return quant_only
 
     # def return_total_data_chart
     def prepare_merged_reward_table(self, praise_rewards, quantifier_rewards):

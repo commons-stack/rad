@@ -21,12 +21,17 @@ def run(praise_distribution_data, _config={}):
         res: a DataFrame with the requested results. Contains two columns, "QUANT_VALUE" and "COUNTS"
 
     """
+
+    # TODO adapt to praiseDist Object (see histogram)
+
     # praise_distribution = PraiseDistribution.generate_from_dict(praise_distribution_data)
 
     praise_distribution = praise_distribution_data
 
     # clear out the quantifiers who didn't give any rating (i.e. all scores are 0)
-    quantifier_rating_table = praise_distribution.get_data_by_quantifier()
+    quantifier_rating_table = (
+        praise_distribution.praiseInstance.get_data_by_quantifier()
+    )
 
     quantifier_sum = (
         quantifier_rating_table[["QUANT_ID", "QUANT_VALUE"]].groupby("QUANT_ID").sum()
@@ -34,7 +39,7 @@ def run(praise_distribution_data, _config={}):
     norating_quantifiers = quantifier_sum.loc[
         quantifier_sum["QUANT_VALUE"] == 0
     ].index.tolist()
-    # [TODO] removing no-raters got lost somewhere. Redo, this whole func is weird
+    # [TODO] removing no-raters got lost somewhere. Redo, this whole func doesn't seem to do what it should
     freq = (
         quantifier_rating_table[["QUANT_VALUE"]]
         .value_counts()

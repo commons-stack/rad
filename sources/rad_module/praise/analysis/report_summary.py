@@ -1,4 +1,4 @@
-from ..distributions.standard_praise import PraiseDistribution
+from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
 import pandas as pd
 from IPython.display import Markdown, display
@@ -22,16 +22,22 @@ def run(praise_distribution_data, _config={}):
         res: a markdown string detailing the data
 
     """
-    praise_distribution = PraiseDistribution.generate_from_dict(
-        praise_distribution_data
-    )
+
+    praise_distribution = praise_distribution_data
+    res = praise_distribution.distributionResults
 
     TOTAL_TOKENS_ALLOCATED = praise_distribution.distAmount
-    DUPLICATE_PRAISE_WEIGHT = praise_distribution.duplicatePraiseValuation
-    NUMBER_OF_QUANTIFIERS_PER_PRAISE = praise_distribution.quantPerPraise
-    PERIOD_START_DATE = pd.DataFrame(praise_distribution.praiseTable)["DATE"].min()[:10]
-    PERIOD_END_DATE = pd.DataFrame(praise_distribution.praiseTable)["DATE"].max()[:10]
-    PSEUDONYMS_USED = praise_distribution.pseudonymsActive
+    DUPLICATE_PRAISE_WEIGHT = (
+        praise_distribution.praiseInstance.duplicatePraiseValuation
+    )
+    NUMBER_OF_QUANTIFIERS_PER_PRAISE = praise_distribution.praiseInstance.quantPerPraise
+    PERIOD_START_DATE = pd.DataFrame(praise_distribution.praiseInstance.dataTable)[
+        "DATE"
+    ].min()[:10]
+    PERIOD_END_DATE = pd.DataFrame(praise_distribution.praiseInstance.dataTable)[
+        "DATE"
+    ].max()[:10]
+    PSEUDONYMS_USED = praise_distribution.praiseInstance.pseudonymsActive
     pseudonym_string = "were" if bool(PSEUDONYMS_USED) else "were not"
 
     res = f"<ul><li>This period covers praise given between <b>{PERIOD_START_DATE}</b> and  <b>{PERIOD_END_DATE}</b>. </li> \
@@ -56,7 +62,7 @@ def printDescription(praise_distribution_data, _config={}):
         nothing, it prints the texts
 
     """
-    name = praise_distribution_data["name"]
+    name = praise_distribution_data.name
     header = f'# Distribution summary for  "{name}" '
     description = f""
 
