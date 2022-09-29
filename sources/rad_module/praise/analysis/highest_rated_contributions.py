@@ -27,9 +27,7 @@ def run(praise_distribution_data, _config={}):
 
     # TODO adapt to praiseDist Object (see histogram)
 
-    praise_distribution = PraiseDistribution.generate_from_dict(
-        praise_distribution_data
-    )
+    praise_distribution = PraiseDistribution.import_from_dict(praise_distribution_data)
 
     toppraise = (
         pd.DataFrame(praise_distribution.praiseTable)

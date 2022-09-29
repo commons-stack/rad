@@ -101,7 +101,7 @@ class Praise(RewardSystem):
         )
 
     @classmethod
-    def generate_from_dict(cls, _dict):
+    def import_from_dict(cls, _dict):
         """
         Recreates an existing instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
 
@@ -114,8 +114,6 @@ class Praise(RewardSystem):
 
 
         """
-
-        # REDO with new structure
 
         name = _dict["name"]
         dataTable = _dict["dataTable"]
@@ -134,18 +132,31 @@ class Praise(RewardSystem):
         )
 
     @classmethod
-    def load_from_json(cls, _path):
-        params = {}
-        with open(_path, "r") as read_file:
-            params = json.load(read_file)
+    def export_to_dict(cls, self):
 
-        _path = os.path.split(_path)
+        exp_dict = super().export_to_dict(self)
 
-        params["input_files"]["praise_data"] = os.path.abspath(
-            os.path.join(_path[0], params["input_files"]["praise_data"])
-        )
+        exp_dict["dataTable"] = self.dataTable
+        exp_dict["quantPerPraise"] = self.quantPerPraise
+        exp_dict["quantAllowedValues"] = self.quantAllowedValues
+        exp_dict["duplicatePraiseValuation"] = self.duplicatePraiseValuation
+        exp_dict["pseudonymsActive"] = self.pseudonymsActive
 
-        return cls.generate_from_params(params["name"], params)
+        return exp_dict
+
+    # @classmethod
+    # def load_from_json(cls, _path):
+    #     params = {}
+    #     with open(_path, "r") as read_file:
+    #         params = json.load(read_file)
+
+    #     _path = os.path.split(_path)
+
+    #     params["input_files"]["praise_data"] = os.path.abspath(
+    #         os.path.join(_path[0], params["input_files"]["praise_data"])
+    #     )
+
+    #     return cls.generate_from_params(params["name"], params)
 
     def calc_percentages(self):
 

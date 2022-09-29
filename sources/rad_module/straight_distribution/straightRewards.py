@@ -16,7 +16,7 @@ class StraightRewards(RewardSystem):
         The class constructor
 
         Args:
-            _benficiaries: list of the users participating in the reward system
+            _beneficiaries: list of the users participating in the reward system
         Raises:
             [TODO]: Check for errors and raise them
         Returns:
@@ -65,7 +65,7 @@ class StraightRewards(RewardSystem):
         )
 
     @classmethod
-    def generate_from_dict(cls, _dict):
+    def import_from_dict(cls, _dict):
         """
         Creates an instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
 
@@ -85,3 +85,12 @@ class StraightRewards(RewardSystem):
             _name=name,
             _beneficiaries=beneficiaries,
         )
+
+    @classmethod
+    def export_to_dict(cls, self):
+
+        exp_dict = super().export_to_dict(self)
+
+        exp_dict["beneficiaries"] = self.beneficiaries
+
+        return exp_dict

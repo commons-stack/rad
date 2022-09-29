@@ -46,7 +46,8 @@ def create_straight_distribution_object(_name, _params):
     Returns:
         cls: An instance of a straight rewards distribution
     """
-    return StraightRewards.generate_from_params(_name, _params)
+    str = StraightRewards.generate_from_params(_name, _params)
+    return str
 
 
 def create_praise_object(_name, _params):
@@ -60,4 +61,5 @@ def create_praise_object(_name, _params):
     Returns:
         cls: An instance of a straight rewards distribution
     """
-    return Praise.generate_from_params(_name, _params)
+    pr = Praise.generate_from_params(_name, _params)
+    return pr

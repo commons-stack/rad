@@ -12,7 +12,7 @@ class StraightDistribution(RewardDistribution):
     def __init__(
         self,
         _name,
-        _beneficiaries,
+        _straightRewardsInstance,
         _distAmount,
         _tokenName,
         _tokenAddress,
@@ -34,7 +34,7 @@ class StraightDistribution(RewardDistribution):
 
         """
         super().__init__(_name, "straight_distribution")
-        self.beneficiaries = _beneficiaries
+        self.straightRewardsInstance = _straightRewardsInstance
         self.totalDistAmount = int(_distAmount)
         self.tokenName = _tokenName
         self.tokenAddress = _tokenAddress
@@ -78,7 +78,10 @@ class StraightDistribution(RewardDistribution):
                 [beneficiaries_input, pd.DataFrame(_sources[obj].beneficiaries)]
             )
         # lets pipe this through pandas to be sure we don't run into issues
-        beneficiaries = pd.DataFrame.to_dict(beneficiaries_input)
+        beneficiaries_input = pd.DataFrame.to_dict(beneficiaries_input)
+        straightRewardsInstance = StraightRewards(
+            "combined_beneficiaries", beneficiaries_input
+        )
 
         distAmount = _params["distribution_amount"]
         tokenName = _params["payout_token"]["token_name"]
@@ -86,14 +89,14 @@ class StraightDistribution(RewardDistribution):
 
         return cls(
             _name=_objectName,
-            _beneficiaries=beneficiaries,
+            _straightRewardsInstance=straightRewardsInstance,
             _distAmount=distAmount,
             _tokenName=tokenName,
             _tokenAddress=tokenAddress,
         )
 
     @classmethod
-    def generate_from_dict(cls, _dict):
+    def import_from_dict(cls, _dict):
         """
         Creates an instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
 
@@ -107,14 +110,27 @@ class StraightDistribution(RewardDistribution):
 
         """
         name = _dict["name"]
-        beneficiaries = _dict["beneficiaries"]
+        straightRewardsInstance = StraightRewards.import_from_dict(
+            _dict["straightRewardsInstance"]
+        )
         distributionResults = _dict["distributionResults"]
 
         return cls(
             _name=name,
-            _beneficiaries=beneficiaries,
+            _straightRewardsInstance=straightRewardsInstance,
             _distributionResults=distributionResults,
         )
+
+    @classmethod
+    def export_to_dict(cls, self):
+
+        exp_dict = super().export_to_dict(self)
+
+        exp_dict[
+            "straightRewardsInstance"
+        ] = self.straightRewardsInstance.export_to_dict(self.straightRewardsInstance)
+
+        return exp_dict
 
     def do_distribution(self) -> None:
         """
@@ -130,7 +146,9 @@ class StraightDistribution(RewardDistribution):
 
         """
 
-        dist_results = pd.DataFrame.from_dict(self.beneficiaries)
+        dist_results = pd.DataFrame.from_dict(
+            self.straightRewardsInstance.beneficiaries
+        )
         dist_results["AMOUNT TO RECEIVE"] = self.totalDistAmount / len(
             dist_results.index
         )

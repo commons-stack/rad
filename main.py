@@ -21,10 +21,12 @@ from pathlib import Path
 from natsort import natsorted
 
 import papermill as pm
+from sources.rad_module.rewardDistribution import RewardDistribution
 
 
 import sources.rad_module.rewardObjectBuilder as objBuilder
 import sources.rad_module.distributionObjectBuilder as distBuilder
+from sources.rad_module.rewardSystem import RewardSystem
 import src.notebookbuilder as nbBuilder
 
 # import src.exporter as exportBuilder
@@ -60,11 +62,29 @@ def run_rad(_inputPath):
 
     # TODO: look for a way to send the exisitng objects (rwdObjs, dstObjs) instead of the path and loading it inside the nb. Will probably require a (much needed) review of the object level import/export funcs
 
+    ### Implementation idea (since current impl leaves notebooks unopenable (though reports work!))
+
+    # Save all te rwdObjs and distObjs in a buffer JSON
+    # create list with name and type ("rwdObj / dstObj")
+    # send to each notebook the path of the bufJSON and the selection of list elements detailing the objects it needs
+    # each notebook calls a function in importer which takes path+list as arg and returns (rwdObjs, dstObjs)
+    # notebook works normally
+    # JSON gets deleted after run. If the user wants to rerun the notebook they can do importer.full_load_json(PATH) form the original paramters.json
+    # (maybe we should keep the files and save them in exports?)
+
+    rwdObjs_dicts = {}
+    for rwd in rwdObjs:
+        rwdObjs_dicts[rwd] = rwdObjs[rwd].export_to_dict(rwdObjs[rwd])
+
+    dstObjs_dicts = {}
+    for dst in dstObjs:
+        dstObjs_dicts[dst] = dstObjs[dst].export_to_dict(dstObjs[dst])
+
     # prepare the parameter set we will use for analysis and the folder with the notebook templates
     analysis_params = {
         "parameters_path": PARAMETERS_PATH,
-        "reward_system_objects": "",
-        "distribution_objects": "",
+        "reward_system_objects": rwdObjs_dicts,
+        "distribution_objects": dstObjs_dicts,
     }
 
     ANALYSIS_NOTEBOOK_FOLDER = "./reports/"

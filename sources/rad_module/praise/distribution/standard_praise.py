@@ -83,6 +83,7 @@ class PraiseDistribution(RewardDistribution):
 
         Args:
             (_params): a dictionary from which we want to instatiate the class from. Loaded from the parameters.json file.
+            _sources: existing reward system objects
         Raises:
             [TODO]: Check for errors and raise them
         Returns:
@@ -94,7 +95,6 @@ class PraiseDistribution(RewardDistribution):
         # load praise Object
         for obj in _sources:
             # future feature: if more than one, merge them (implement method in Praise object)
-            # print(_sources[obj].type)
             if _sources[obj].type == "praise" and praiseObj == {}:
                 praiseObj = _sources[obj]
             if _sources[obj].type == "straight_distribution" and rewardObj == {}:
@@ -121,7 +121,7 @@ class PraiseDistribution(RewardDistribution):
         )
 
     @classmethod
-    def generate_from_dict(cls, _dict):
+    def import_from_dict(cls, _dict):
         """
         Recreates an existing instance of the rewards system from a dictionary. The dictionary must be structured like the class itself
 
@@ -138,8 +138,8 @@ class PraiseDistribution(RewardDistribution):
         # REDO with new structure
 
         name = _dict["name"]
-        praiseObj = _dict["praiseInstance"]
-        rewardboardObj = _dict["rewardboardInstance"]
+        praiseObj = Praise.import_from_dict(_dict["praiseInstance"])
+        rewardboardObj = StraightRewards.import_from_dict(_dict["rewardboardInstance"])
 
         userRewardPct = _dict["userRewardPct"]
         quantifierRewardPct = _dict["quantifierRewardPct"]
@@ -151,8 +151,8 @@ class PraiseDistribution(RewardDistribution):
 
         return cls(
             _name=name,
-            _praiseTable=praiseObj,
-            _rewardboard=rewardboardObj,
+            _praiseInstance=praiseObj,
+            _rewardboardInstance=rewardboardObj,
             _distAmount=distAmount,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
@@ -161,6 +161,28 @@ class PraiseDistribution(RewardDistribution):
             _tokenAddress=tokenAddress,
             _distributionResults=distributionResults,
         )
+
+    @classmethod
+    def export_to_dict(cls, self):
+
+        exp_dict = super().export_to_dict(self)
+
+        exp_dict["praiseInstance"] = self.praiseInstance.export_to_dict(
+            self.praiseInstance
+        )
+        exp_dict["rewardBoardInstance"] = self.rewardboardInstance.export_to_dict(
+            self.rewardboardInstance
+        )
+
+        exp_dict["userRewardPct"] = self.userRewardPct
+        exp_dict["quantifierRewardPct"] = self.quantifierRewardPct
+        exp_dict["rewardboardRewardPct"] = self.rewardboardRewardPct
+        exp_dict["distAmount"] = self.distAmount
+        exp_dict["tokenName"] = self.tokenName
+        exp_dict["tokenAddress"] = self.tokenAddress
+        exp_dict["distributionResults"] = self.distributionResults
+
+        return exp_dict
 
     def do_distribution(self) -> None:
         """

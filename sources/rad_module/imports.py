@@ -36,15 +36,12 @@ def load_sources_from_json(_fullPath):
                     input_path, params["sources"][reward_system]["input_files"][file]
                 )
             )
-
         # create rewards Object
         rewardsystem_objects[reward_system] = objBuilder.build_reward_object(
             reward_system,
             params["sources"][reward_system]["type"],
             params["sources"][reward_system],
         )
-
-    # print(rewardsystem_objects)
 
     distribution_objects = {}
     for distribution in params["distributions"]:
@@ -58,7 +55,6 @@ def load_sources_from_json(_fullPath):
             params["distributions"][distribution],
             dist_sources,
         )
-
     # print(distribution_objects)
 
     return (rewardsystem_objects, distribution_objects)

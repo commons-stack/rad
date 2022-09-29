@@ -34,7 +34,7 @@ def run(praise_distribution_data, _config={}):
     # [TODO]  Hard Refactor
 
     # print(praise_distribution_data)
-    distribution = PraiseDistribution.generate_from_dict(praise_distribution_data)
+    distribution = PraiseDistribution.import_from_dict(praise_distribution_data)
 
     dataframe_in = pd.DataFrame(distribution.praiseTable)
     dist_for_praise_flow = dataframe_in.rename(
