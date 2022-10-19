@@ -45,7 +45,7 @@ def run_rad(_inputPath):
         # "distribution_objects": dstObjs_dicts,
     }
 
-    ANALYSIS_NOTEBOOK_FOLDER = "./reports/"
+    ANALYSIS_NOTEBOOK_FOLDER = "./my_reports/"
 
     if not os.path.isdir(ANALYSIS_NOTEBOOK_FOLDER):
         print(f"No analysis notebook path not provided, skip analysis.")
