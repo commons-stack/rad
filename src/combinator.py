@@ -1,1 +1,0 @@
-#This script combines the results from the same tool in different praise systems to one output (e.g. "aragon-distribution" for praise + sourcecred)

@@ -15,23 +15,11 @@
 import argparse
 import os
 import subprocess
-import json
-import shutil
 from pathlib import Path
 from natsort import natsorted
 
 import papermill as pm
-from sources.rad_module.rewardDistribution import RewardDistribution
 
-
-import sources.rad_module.rewardObjectBuilder as objBuilder
-import sources.rad_module.distributionObjectBuilder as distBuilder
-from sources.rad_module.rewardSystem import RewardSystem
-import src.notebookbuilder as nbBuilder
-
-# import src.exporter as exportBuilder
-
-import sources.rad_module.imports as importer
 
 
 def run_rad(_inputPath):
@@ -43,20 +31,14 @@ def run_rad(_inputPath):
 
     NOTEBOOK_OUTPUT_PATH = ROOT_OUTPUT_PATH + "executed_notebooks/"
     REPORT_OUTPUT_PATH = ROOT_OUTPUT_PATH + "reports/"
+    EXPORTS_OUTPUT_PATH = ROOT_OUTPUT_PATH + "exports/"
 
     # create output file structure:
     Path(ROOT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
     Path(NOTEBOOK_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
-    Path(REPORT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
+    Path(REPORT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)+
+    Path(EXPORTS_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
 
-    (rwdObjs, dstObjs) = importer.load_sources_from_json(PARAMETERS_PATH)
-
-    # prepare papermill inputs
-
-    # loop through "reports" folder
-    # for each folder -> run ipynb with papermill
-
-    # move outputs to results folder
 
     # /// COPIED FROM RAD CLASSIC
 
@@ -72,19 +54,21 @@ def run_rad(_inputPath):
     # JSON gets deleted after run. If the user wants to rerun the notebook they can do importer.full_load_json(PATH) form the original paramters.json
     # (maybe we should keep the files and save them in exports?)
 
-    rwdObjs_dicts = {}
-    for rwd in rwdObjs:
-        rwdObjs_dicts[rwd] = rwdObjs[rwd].export_to_dict(rwdObjs[rwd])
+    # rwdObjs_dicts = {}
+    # for rwd in rwdObjs:
+    #    rwdObjs_dicts[rwd] = rwdObjs[rwd].export_to_dict(rwdObjs[rwd])
 
-    dstObjs_dicts = {}
-    for dst in dstObjs:
-        dstObjs_dicts[dst] = dstObjs[dst].export_to_dict(dstObjs[dst])
+    # dstObjs_dicts = {}
+    # for dst in dstObjs:
+    #    dstObjs_dicts[dst] = dstObjs[dst].export_to_dict(dstObjs[dst])
+
+    # TODO allow to specify in params if you want to send just a set of data to a specific report.
 
     # prepare the parameter set we will use for analysis and the folder with the notebook templates
     analysis_params = {
-        "parameters_path": PARAMETERS_PATH,
-        "reward_system_objects": rwdObjs_dicts,
-        "distribution_objects": dstObjs_dicts,
+        "parameters_path": PARAMETERS_PATH
+        # "reward_system_objects": rwdObjs_dicts,
+        # "distribution_objects": dstObjs_dicts,
     }
 
     ANALYSIS_NOTEBOOK_FOLDER = "./reports/"
@@ -109,12 +93,12 @@ def run_rad(_inputPath):
                 nb_input_path, nb_destination_path, parameters=analysis_params
             )
 
-            # # copy generated csv files to results folder
-            # for output_csv in os.listdir():
-            #     if not (output_csv.endswith(".csv")):
-            #         continue
-            #     csv_destination = DISTRIBUTION_OUTPUT_PATH + output_csv
-            #     os.rename(output_csv, csv_destination)
+            # copy generated csv files to results folder
+            for output_csv in os.listdir():
+                if not (output_csv.endswith(".csv")):
+                    continue
+                csv_destination = EXPORTS_OUTPUT_PATH + output_csv
+                os.rename(output_csv, csv_destination)
 
             # generate HTML report
             return_buf = subprocess.run(
@@ -126,13 +110,20 @@ def run_rad(_inputPath):
             # move it to right folder
             html_report_origin = nb_destination_path[:-6] + ".html"
             html_report_destination = (
-                REPORT_OUTPUT_PATH + notebook[2:-6] + "-report.html"
+                REPORT_OUTPUT_PATH + notebook[0:-6] + "-report.html"
             )
             os.rename(html_report_origin, html_report_destination)
 
+            # TODO delete buffer file
+
     # /// END COPIED FROM RAD CLASSIC
 
-    # TODO Future feature: specify the list of reports to run in params.json
+    # TODO Future feature: specify the list of reports with specific parameters to run in params.json
+    #       ->  the idea would be to create a on-the-fly json file, which then
+    #           gets loaded as params.json in the notebook. We delete the file #           afterwards
+
+    # TODO Feature: specify list of exports in params.json(outside of notebook) 
+    #       -> Mostly done, check line 203
 
     print("========= DONE ==========")
 
