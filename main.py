@@ -38,30 +38,6 @@ def run_rad(_inputPath):
     Path(REPORT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
     Path(EXPORTS_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
 
-    # /// COPIED FROM RAD CLASSIC
-
-    # TODO: look for a way to send the exisitng objects (rwdObjs, dstObjs) instead of the path and loading it inside the nb. Will probably require a (much needed) review of the object level import/export funcs
-
-    ### Implementation idea (since current impl leaves notebooks unopenable (though reports work!))
-
-    # Save all te rwdObjs and distObjs in a buffer JSON
-    # create list with name and type ("rwdObj / dstObj")
-    # send to each notebook the path of the bufJSON and the selection of list elements detailing the objects it needs
-    # each notebook calls a function in importer which takes path+list as arg and returns (rwdObjs, dstObjs)
-    # notebook works normally
-    # JSON gets deleted after run. If the user wants to rerun the notebook they can do importer.full_load_json(PATH) form the original paramters.json
-    # (maybe we should keep the files and save them in exports?)
-
-    # rwdObjs_dicts = {}
-    # for rwd in rwdObjs:
-    #    rwdObjs_dicts[rwd] = rwdObjs[rwd].export_to_dict(rwdObjs[rwd])
-
-    # dstObjs_dicts = {}
-    # for dst in dstObjs:
-    #    dstObjs_dicts[dst] = dstObjs[dst].export_to_dict(dstObjs[dst])
-
-    # TODO allow to specify in params if you want to send just a set of data to a specific report.
-
     # prepare the parameter set we will use for analysis and the folder with the notebook templates
     analysis_params = {
         "parameters_path": PARAMETERS_PATH
@@ -112,15 +88,12 @@ def run_rad(_inputPath):
             )
             os.rename(html_report_origin, html_report_destination)
 
-            # TODO delete buffer file
-
-    # /// END COPIED FROM RAD CLASSIC
-
-    # TODO Future feature: specify the list of reports with specific parameters to run in params.json
+    # TODO Future feature: specify the list of reports with specific parameters to run in params.json (basically reimplement params.json LL.54)
     #       ->  the idea would be to create a on-the-fly json file, which then
     #           gets loaded as params.json in the notebook. We delete the file #           afterwards
 
     # TODO Feature: specify list of exports in params.json(outside of notebook)
+    #           (as in params.json, LL.60)
     #       -> Mostly done, check line 203
 
     print("========= DONE ==========")
