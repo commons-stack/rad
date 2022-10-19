@@ -21,7 +21,6 @@ from natsort import natsorted
 import papermill as pm
 
 
-
 def run_rad(_inputPath):
 
     ROOT_INPUT_PATH = _inputPath
@@ -36,9 +35,8 @@ def run_rad(_inputPath):
     # create output file structure:
     Path(ROOT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
     Path(NOTEBOOK_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
-    Path(REPORT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)+
+    Path(REPORT_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
     Path(EXPORTS_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
-
 
     # /// COPIED FROM RAD CLASSIC
 
@@ -122,7 +120,7 @@ def run_rad(_inputPath):
     #       ->  the idea would be to create a on-the-fly json file, which then
     #           gets loaded as params.json in the notebook. We delete the file #           afterwards
 
-    # TODO Feature: specify list of exports in params.json(outside of notebook) 
+    # TODO Feature: specify list of exports in params.json(outside of notebook)
     #       -> Mostly done, check line 203
 
     print("========= DONE ==========")

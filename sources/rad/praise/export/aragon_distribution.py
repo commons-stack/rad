@@ -4,7 +4,7 @@ import pandas as pd
 # from ..distributions.standard_praise import PraiseDistribution
 
 
-def run_export(_data, _config={}):
+def run_export(_filename, _data, _config={}):
     """
     Creates an Aragon-Transactions-friendly distribution CSV.
 
@@ -16,6 +16,7 @@ def run_export(_data, _config={}):
         Returns:
             nothing, just saves the files
     """
+    _filename += ".csv"
 
     final_token_allocations = pd.DataFrame(_data.distributionResults)
 
@@ -32,4 +33,7 @@ def run_export(_data, _config={}):
     ]
     final_alloc_aragon = final_alloc_aragon.to_csv(sep=",", index=False, header=False)
 
-    return final_alloc_aragon, ".csv"
+    with open(_filename, "w") as f:
+        f.write(final_alloc_aragon)
+
+    return

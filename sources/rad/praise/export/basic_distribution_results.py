@@ -2,7 +2,7 @@ import pandas as pd
 from ..praiseObj import Praise
 
 
-def run_export(_data, _config={}):
+def run_export(_filename, _data, _config={}):
     """
     Creates a CSV file of the distribution.
 
@@ -12,10 +12,15 @@ def run_export(_data, _config={}):
         Raises:
             [TODO] Implement errors and list them here.
         Returns:
-            nothing, just saves the files
+            nothing, just saves it
     """
+
+    _filename += ".csv"
 
     final_token_allocations = pd.DataFrame(_data.distributionResults)
     final_allocation_csv = final_token_allocations.to_csv(sep=",", index=False)
 
-    return final_allocation_csv, ".csv"
+    with open(_filename, "w") as f:
+        f.write(final_allocation_csv)
+
+    return
