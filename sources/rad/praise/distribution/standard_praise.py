@@ -23,6 +23,7 @@ class PraiseDistribution(RewardDistribution):
         _praiseInstance,
         _rewardboardInstance,
         _distAmount,
+        _ceilingCutoff,
         _userRewardPct,
         _quantifierRewardPct,
         _rewardboardRewardPct,
@@ -53,6 +54,7 @@ class PraiseDistribution(RewardDistribution):
         self.quantifierRewardPct = _quantifierRewardPct
         self.rewardboardRewardPct = _rewardboardRewardPct
         self.distAmount = int(_distAmount)
+        self.ceilingCutoff = int(_ceilingCutoff)
         self.tokenName = _tokenName
         self.tokenAddress = _tokenAddress
         self.distributionResults = _distributionResults
@@ -101,6 +103,7 @@ class PraiseDistribution(RewardDistribution):
                 rewardObj = _sources[obj]
 
         distAmount = _params["distribution_amount"]
+        ceilingCutoff = _params["ceiling_cutoff"]
         userRewardPct = _params["user_dist_pct"]
         quantifierRewardPct = _params["quantifiers_dist_pct"]
         rewardboardRewardPct = _params["reward_dist_pct"]
@@ -113,6 +116,7 @@ class PraiseDistribution(RewardDistribution):
             _praiseInstance=praiseObj,
             _rewardboardInstance=rewardObj,
             _distAmount=distAmount,
+            _ceilingCutoff=ceilingCutoff,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
             _rewardboardRewardPct=rewardboardRewardPct,
@@ -145,6 +149,7 @@ class PraiseDistribution(RewardDistribution):
         quantifierRewardPct = _dict["quantifierRewardPct"]
         rewardboardRewardPct = _dict["rewardboardRewardPct"]
         distAmount = _dict["distAmount"]
+        ceilingCutoff = _dict["ceilingCutoff"]
         tokenName = _dict["tokenName"]
         tokenAddress = _dict["tokenAddress"]
         distributionResults = _dict["distributionResults"]
@@ -154,6 +159,7 @@ class PraiseDistribution(RewardDistribution):
             _praiseInstance=praiseObj,
             _rewardboardInstance=rewardboardObj,
             _distAmount=distAmount,
+            _ceilingCutoff=ceilingCutoff,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
             _rewardboardRewardPct=rewardboardRewardPct,
@@ -205,8 +211,17 @@ class PraiseDistribution(RewardDistribution):
 
         # calculate praise rewards and update the datatable
 
-        praiseTokenAmount = self.distAmount * self.userRewardPct / 100
-        quantTokenAmount = self.distAmount * self.quantifierRewardPct / 100
+        # if the amount of praise is below the cutoff, adapt number of distributed tokens
+        total_tokens_allocated = self.distAmount
+        if len(self.praiseInstance.dataTable) < self.ceilingCutoff:
+            total_tokens_allocated = (
+                len(self.praiseInstance.dataTable)
+                / self.ceilingCutoff
+                * float(total_tokens_allocated)
+            )
+
+        praiseTokenAmount = total_tokens_allocated * self.userRewardPct / 100
+        quantTokenAmount = total_tokens_allocated * self.quantifierRewardPct / 100
 
         praise_by_user = self.praiseInstance.get_praise_by_user()
 
