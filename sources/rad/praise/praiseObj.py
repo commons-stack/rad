@@ -202,6 +202,75 @@ class Praise(RewardSystem):
 
         return praise_by_user
 
+    def get_praise_by_giver(self):
+        """
+        Returns a DataFrame of the total praise given by each user
+        Args:
+           - None
+        Raises:
+            [TODO]: Check for errors and raise them
+        Returns:
+            praise_by_giver: DataFrame containing name, address, total praise given and corresponding % for all users
+
+        """
+        praise_data = pd.DataFrame(self.dataTable)
+
+        quant_col_list = []
+        for i in range(self.quantPerPraise):
+            q_name = str("QUANTIFIER " + str(i + 1) + " USERNAME")
+            quant_col_list.append(q_name)
+
+        praise_data["INVOLVED QUANTIFIERS"] = praise_data[
+            quant_col_list
+        ].values.tolist()
+
+        praise_by_giver = (
+            praise_data[
+                [
+                    "FROM USER ACCOUNT",
+                    "FROM USER ACCOUNT ID",
+                    "FROM ETH ADDRESS",
+                    "AVG SCORE",
+                ]
+            ]
+            .copy()
+            .groupby(["FROM USER ACCOUNT", "FROM USER ACCOUNT ID", "FROM ETH ADDRESS"])
+            .agg("sum")
+            .reset_index()
+        ).copy()
+
+        praise_by_giver["INVOLVED QUANTIFIERS"] = ""
+
+        for index, row in praise_by_giver.iterrows():
+
+            user = row["FROM USER ACCOUNT ID"]
+
+            select_rows = praise_data.loc[praise_data["FROM USER ACCOUNT ID"] == user]
+
+            flat_ls = [
+                item
+                for sublist in select_rows["INVOLVED QUANTIFIERS"]
+                for item in sublist
+            ]
+
+            uniques = set(flat_ls)
+
+            praise_by_giver.at[index, "INVOLVED QUANTIFIERS"] = uniques
+
+        total_score_points = praise_by_giver["AVG SCORE"].sum()
+
+        praise_by_giver["PERCENTAGE"] = (
+            praise_by_giver["AVG SCORE"] / total_score_points
+        )
+
+        praise_by_giver.rename(columns={"AVG SCORE": "POINTS GIVEN"}, inplace=True)
+
+        praise_by_giver.sort_values(
+            by="POINTS GIVEN", inplace=True, ascending=False, ignore_index=True
+        )
+
+        return praise_by_giver
+
     def get_data_by_quantifier(self):
         """
         Returns a DataFrame of the praise sorted by quantifier
