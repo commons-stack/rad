@@ -4,11 +4,29 @@
 # ====================
 #
 
-
+import json
+from . import importer
 import importlib
 from importlib.metadata import distribution
 
 # from .rewardSystem import RewardSystem
+
+
+def process_all_exports(parameters_path):
+    params = {}
+    with open(parameters_path, "r") as read_file:
+        params = json.load(read_file)
+    if "exports" in params:
+
+        (reward_system_objects, distribution_objects) = importer.load_sources_from_json(
+            parameters_path
+        )
+
+        for export in params["exports"]:
+            _data = {}
+            for source_system in params["exports"][export]["sources"]:
+                _data[source_system] = distribution_objects[source_system]
+                run_export(export, params["exports"][export], _data)
 
 
 def run_export(_name, _config, _data):
@@ -46,7 +64,7 @@ def run_single_export(_name, _config, _rewardObj):
             nothing, just saves the files
     """
 
-    PATH_TO_MODULE = "reward_systems." + _rewardObj.type + ".exports." + _config["type"]
+    PATH_TO_MODULE = "rad." + _rewardObj.type + ".export." + _config["type"]
     mod = importlib.import_module(PATH_TO_MODULE)
 
     export_file, export_extension = mod.run_export(_rewardObj, _config)

@@ -30,7 +30,7 @@ def generate_post(_data):
     # params["token_allocation_per_reward_system"] = list(map(int, params["token_allocation_per_reward_system"]))
 
     # data = pd.read_csv(praise_path)
-    dataTable = pd.DataFrame(_data.praiseTable)
+    dataTable = pd.DataFrame(_data.praiseInstance.dataTable)
     start_date = pd.to_datetime(dataTable["DATE"].min()).date()
 
     end_date = pd.to_datetime(dataTable["DATE"].max()).date()

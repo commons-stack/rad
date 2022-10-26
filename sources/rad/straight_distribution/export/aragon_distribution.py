@@ -31,3 +31,13 @@ def run_export(_data, _config={}):
     final_alloc_aragon = final_alloc_aragon.to_csv(sep=",", index=False, header=False)
 
     return final_alloc_aragon, ".csv"
+
+
+def save_export(_name, _data, _config={}):
+
+    export_file, export_extension = run_export(_data, _config)
+
+    # filename = "export_" + _name + "_" + _config["type"] + ".csv"
+    filename = _name + export_extension
+    with open(filename, "w") as f:
+        f.write(export_file)
