@@ -94,10 +94,6 @@ def run_rad(_inputPath):
             #       ->  the idea would be to create a on-the-fly json file, which then
             #           gets loaded as params.json in the notebook. We delete the file #           afterwards
 
-            # TODO Feature: specify list of exports in params.json(outside of notebook)
-            #           (as in params.json, LL.60)
-            #       -> Mostly done, check line 203
-
     exports.process_all_exports(PARAMETERS_PATH)
 
     print("========= DONE ==========")

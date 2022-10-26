@@ -26,7 +26,8 @@ def process_all_exports(parameters_path):
             _data = {}
             for source_system in params["exports"][export]["sources"]:
                 _data[source_system] = distribution_objects[source_system]
-                run_export(export, params["exports"][export], _data)
+
+            run_export(export, params["exports"][export], _data)
 
 
 def run_export(_name, _config, _data):
@@ -91,5 +92,5 @@ def run_combined_export(_name, _config, _data):
             nothing, just saves the files
     """
     # [TODO] Implement this
-    print("Multi-system export not yet implemented. Pass")
+    print(f"{_name}: Multi-system export not yet implemented. Pass")
     pass

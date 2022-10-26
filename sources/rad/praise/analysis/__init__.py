@@ -1,9 +1,12 @@
 from . import (
+    agreement_check,
     distribution_histogram,
-    praise_giver_histogram,
-    sort_by_controversial,
     highest_rated_contributions,
     praise_flow,
+    praise_giver_histogram,
+    quantifier_boxplot,
+    quantifier_scoring_analysis,
     rating_distribution,
     report_summary,
+    sort_by_controversial,
 )
