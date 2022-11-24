@@ -24,8 +24,8 @@ def combine_distribution_table(distObjs, config={}):
     return allrounds_df
 
 
-def combine_quantifier_data(distObjs, config={}):
-    # receives an array of distobj and returns a dataframe containing the whole istribution results.
+def combine_quantification_data(distObjs, config={}):
+    # receives an array of distobj and returns a dataframe containing the whole quantification data.
 
     allrounds_df = []
 

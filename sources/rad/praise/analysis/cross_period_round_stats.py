@@ -34,16 +34,47 @@ def run(allrounds_df, _config={}):
 
         #
         round_row["total_praise"] = len(current_praise)
-        round_row["total_praise_receiver"] = len(
+        round_row["total_praise_receivers"] = len(
             np.unique(current_praise["TO USER ACCOUNT"])
         )
-        round_row["total_praise_giver"] = len(
+        round_row["total_praise_givers"] = len(
             np.unique(current_praise["FROM USER ACCOUNT"])
         )
 
+        round_row["total_quantifiers"] = len(
+            np.unique(current_praise.filter(like="QUANTIFIER"))
+        )
+
+        round_row["round_user_list"] = set(
+            np.unique(current_praise.filter(like="ACCOUNT"))
+        ).union(set(np.unique(current_praise.filter(like="QUANTIFIER"))))
+
         all_stats.append(round_row)
 
-    return pd.DataFrame(all_stats)
+    all_stats = pd.DataFrame(all_stats)
+
+    ### check for user differences between rounds:
+    all_stats["round_user_new"] = [np.nan] + [
+        len(
+            all_stats.iloc[(kr + 1)]["round_user_list"]
+            - all_stats.iloc[kr]["round_user_list"]
+        )
+        for kr in np.arange(all_stats.shape[0] - 1)
+    ]
+
+    all_stats["round_user_left"] = [np.nan] + [
+        len(
+            all_stats.iloc[kr]["round_user_list"]
+            - all_stats.iloc[(kr + 1)]["round_user_list"]
+        )
+        for kr in np.arange(all_stats.shape[0] - 1)
+    ]
+
+    all_stats["round_net_user_diff"] = (
+        all_stats["round_user_new"] - all_stats["round_user_left"]
+    )
+
+    return all_stats
 
 
 def printDescription(praise_distribution_data, _config={}):
