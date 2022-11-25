@@ -1,6 +1,13 @@
 import pandas as pd
 import numpy as np
 from IPython.display import Markdown, display
+
+import nltk
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+import re
+
+nltk.download("stopwords")
 from re import search
 import plotly.express as px
 
@@ -55,7 +62,7 @@ def printDescription(praise_distribution_data, categ_keywords, _config={}):
             toppraise = (
                 categ_praise_df[categ]
                 .sort_values(by="avg_score", ascending=False)
-                .iloc[:_num]
+                .iloc[: int(_num)]
             )
             top3_table = f"\
         | Avg. score | To | Reason | Date |\n \
@@ -64,7 +71,7 @@ def printDescription(praise_distribution_data, categ_keywords, _config={}):
                 to_user = row["receiver"]
                 reason = row["praise"]
                 score = row["avg_score"]
-                date = row["date"][:10]
+                date = str(row["date"])[:10]
 
                 top3_table += f"| {score} | {to_user} | {reason} | {date} |\n"
                 # print(f'Praise score average: {score}\nFROM {from_user} TO {to_user},reason:\n{reason}\n')
@@ -80,7 +87,7 @@ def printGraph(praise_distribution_data, categ_keywords, _config={}):
         _y = "number"
     else:
         _mode = _config["mode"]
-        _y = _config["y"]
+        _y = _config["_y"]
 
     # mode avg score box
     if _mode == "avg-stats":
@@ -101,7 +108,7 @@ def printGraph(praise_distribution_data, categ_keywords, _config={}):
 
     # mode trend, y = "number"/ "avg_score"
     if _mode == "trend":
-        trend_df = create_trend_df(praise_distribution_data, categ_keywords)
+        trend_df = create_trend_df(praise_distribution_data.copy(), categ_keywords)
         px.line(
             trend_df.filter(like=_y),
             title="number of praise in each category, across time",
@@ -196,13 +203,15 @@ def create_category_df(input_df, categ_keywords):
 
 def create_trend_df(praise_distribution_data, categ_keywords):
 
-    round_stats = cross_period_round_stats.run(allrounds_df)
+    round_stats = cross_period_round_stats.run(praise_distribution_data)
 
     allrounds_df = praise_distribution_data.copy()
     mean_score_dict = {k: [] for k in categ_keywords.keys()}
     praise_num_dict = {k: [] for k in categ_keywords.keys()}
     for round_name in allrounds_df["DIST_ROUND"].unique():
-        round_categ_praise_score_df, _ = run(allrounds_df[round_name], categ_keywords)
+        round_categ_praise_score_df = run(
+            allrounds_df[allrounds_df["DIST_ROUND"] == round_name], categ_keywords
+        )
         round_categ_stats = get_categ_stats(round_categ_praise_score_df, categ_keywords)
         for key in mean_score_dict.keys():
             mean_score_dict[key].append(round_categ_stats["mean"].loc[key])

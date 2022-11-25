@@ -20,3 +20,7 @@
 - [ ] rating_distribution.py: removing no-raters got lost somewhere. Redo
 - [ ] allow to user to create their own folder with reports/dstributions/exports and call them from inside RAD
 - [ ] general renaming/cleanup
+- [ ] Cross-period: Fix breaking bug in last cell
+- [ ] Fix printing bug
+- [ ] Compare results with original to make sure everything works
+- [ ] Refactor cross period modules and function calls
