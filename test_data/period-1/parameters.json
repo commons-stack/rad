@@ -51,10 +51,10 @@
       }
     }
   },
-  "reports": {
-    "test_rad_report": {
-      "type": "general_rad_report",
-      "sources": ["tec_praise_dist"]
+  "report_settings": {
+    "cross_period_settings": {
+      "data": "../cross_period_exp",
+      "mode": "root_folder"
     }
   },
   "exports": {
@@ -81,6 +81,21 @@
     "praise_forum_post": {
       "type": "forum_post",
       "sources": ["tec_praise_dist"]
+    },
+    "praise_categories": {
+      "type": "categorized_praise",
+      "sources": ["tec_praise_dist"],
+      "categ_keywords": {
+        "attendance": "join|attend|show up|participat",
+        "discussion": "question|ask|discuss|discussion",
+        "work": "help|work|design|make|write|hack|edit",
+        "lead": "host|lead|initiate|form|organize|steward",
+        "share": "share|spread",
+        "twitter": "twitter|tweet",
+        "hack": "hack|test",
+        "general": "support|awesome",
+        "IRL": "trip|conference"
+      }
     }
   }
 }

@@ -20,7 +20,10 @@
 - [ ] rating_distribution.py: removing no-raters got lost somewhere. Redo
 - [ ] allow to user to create their own folder with reports/dstributions/exports and call them from inside RAD
 - [ ] general renaming/cleanup
-- [ ] Cross-period: Fix breaking bug in last cell
-- [ ] Fix printing bug
+- [x] Cross-period: Fix breaking bug in last cell
+- [ ] Make export for category analysis (look at TODO in analysis module)
+- [x] Look into "root-folder" parameter bug
+- [ ] Decide how to implement Nakamoto score/ratio
 - [ ] Compare results with original to make sure everything works
 - [ ] Refactor cross period modules and function calls
+- [ ] Make sure the forum post reflects the final distributed tokens, not the maximum
