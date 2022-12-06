@@ -27,4 +27,4 @@
 - [ ] Compare results with original to make sure everything works
 - [ ] Refactor cross period modules and function calls
 - [ ] Make sure the forum post reflects the final distributed tokens, not the maximum
-- [ ] test
+- [ ] Allow to specify the name of the parameters file (to easily adapt tec-rewards)
