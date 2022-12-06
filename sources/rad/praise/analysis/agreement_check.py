@@ -44,8 +44,8 @@ def run(praise_distribution_data, _config={"value": "duplication"}):
             f"DISMISSED {k+1}" for k in range(NUMBER_OF_QUANTIFIERS_PER_PRAISE)
         ]
 
-    print(_COL)
-    print(_AGREED)
+    # print(_COL)
+    # print(_AGREED)
 
     # pre-process to remove None
     dup_agree_check = sort_by_controversial.run(praise_distribution_data)

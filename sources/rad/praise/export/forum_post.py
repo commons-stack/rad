@@ -24,6 +24,18 @@ def run_export(_data, _config={}):
     return forum_post, export_extension
 
 
+def save_export(_name, _data, _config={}):
+
+    export_file, export_extension = run_export(_data, _config)
+
+    # filename = "export_" + _name + "_" + _config["type"] + ".csv"
+    filename = _name + export_extension
+    with open(filename, "w") as f:
+        f.write(export_file)
+
+    return [filename]
+
+
 def generate_post(_data):
     # praise_path = params["system_settings"]["praise"]["input_files"]["praise_data"]
     # token_table_path = ROOT_INPUT_PATH + "distribution_results/raw_csv_exports/final_praise_token_allocation.csv"

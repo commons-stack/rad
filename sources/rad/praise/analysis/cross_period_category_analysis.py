@@ -7,7 +7,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 import re
 
-nltk.download("stopwords")
+nltk.download("stopwords", quiet=True)
 from re import search
 import plotly.express as px
 
@@ -52,30 +52,36 @@ def printDescription(praise_distribution_data, categ_keywords, _config={}):
         _num = _config["num"]
     # mode: basic table (get_categ_stats?)
     if _mode == "summary-table":
-        display(get_categ_stats(categ_praise_df, categ_keywords))
+        summary_df = get_categ_stats(categ_praise_df, categ_keywords)
+        mdtext = summary_df.to_markdown()
+        display(Markdown(mdtext))
 
     # mode top x per cat
     if _mode == "top-scored":
         mdtext = ""
         for categ in categ_praise_df.keys():
             categ_name = "# " + categ + "\n"
-            toppraise = (
-                categ_praise_df[categ]
-                .sort_values(by="avg_score", ascending=False)
-                .iloc[: int(_num)]
-            )
-            top3_table = f"\
-        | Avg. score | To | Reason | Date |\n \
-        |:-----------|----|--------|-----:|\n"
-            for kr, row in toppraise.iterrows():
-                to_user = row["receiver"]
-                reason = row["praise"]
-                score = row["avg_score"]
-                date = str(row["date"])[:10]
 
-                top3_table += f"| {score} | {to_user} | {reason} | {date} |\n"
-                # print(f'Praise score average: {score}\nFROM {from_user} TO {to_user},reason:\n{reason}\n')
-            mdtext += categ_name + top3_table
+            if len(categ_praise_df[categ].index) == 0:
+                mdtext += categ_name + "No praise for this category \n"
+            else:
+                toppraise = (
+                    categ_praise_df[categ]
+                    .sort_values(by="avg_score", ascending=False)
+                    .iloc[: int(_num)]
+                )
+                top3_table = f"\
+| Avg. score | To | Reason | Date |\n \
+|:-----------|----|--------|-----:|\n"
+                for kr, row in toppraise.iterrows():
+                    to_user = row["receiver"]
+                    reason = row["praise"]
+                    score = row["avg_score"]
+                    date = str(row["date"])[:10]
+
+                    top3_table += f"| {score} | {to_user} | {reason} | {date} |\n"
+                    # print(f'Praise score average: {score}\nFROM {from_user} TO {to_user},reason:\n{reason}\n')
+                mdtext += categ_name + top3_table + "\n"
         display(Markdown(mdtext))
 
 
@@ -84,10 +90,8 @@ def printGraph(praise_distribution_data, categ_keywords, _config={}):
 
     if _config == {}:
         _mode = "avg-stats"
-        _y = "number"
     else:
         _mode = _config["mode"]
-        _y = _config["_y"]
 
     # mode avg score box
     if _mode == "avg-stats":
@@ -104,15 +108,20 @@ def printGraph(praise_distribution_data, categ_keywords, _config={}):
             title="average score of each category",
         )
         fig.show()
-        display(Markdown("errorbars mark the maximum average score for this category"))
+        # display(Markdown("errorbars mark the maximum average score for this category"))
 
-    # mode trend, y = "number"/ "avg_score"
+    # mode trend, y = "number"/ "_avg_score"
     if _mode == "trend":
+        if _config == {}:
+            _y = "_avg_score"
+        else:
+            _y = _config["y"]
         trend_df = create_trend_df(praise_distribution_data.copy(), categ_keywords)
-        px.line(
+        fig = px.line(
             trend_df.filter(like=_y),
             title="number of praise in each category, across time",
         )
+        fig.show()
 
     pass
 
@@ -131,6 +140,7 @@ def get_categ_stats(categ_praise_scores_df, keywords):
 
     categ_stats_df = pd.DataFrame(categ_stats)
     categ_stats_df = categ_stats_df.transpose().sort_values(by="mean")
+    categ_stats_df = categ_stats_df.fillna(0)
     return categ_stats_df
 
 
@@ -208,9 +218,13 @@ def create_trend_df(praise_distribution_data, categ_keywords):
     allrounds_df = praise_distribution_data.copy()
     mean_score_dict = {k: [] for k in categ_keywords.keys()}
     praise_num_dict = {k: [] for k in categ_keywords.keys()}
-    for round_name in allrounds_df["DIST_ROUND"].unique():
+    for i in range(len(round_stats)):
         round_categ_praise_score_df = run(
-            allrounds_df[allrounds_df["DIST_ROUND"] == round_name], categ_keywords
+            allrounds_df[
+                (allrounds_df["DATE"] > round_stats.loc[i, "period_start_time"])
+                & (allrounds_df["DATE"] <= round_stats.loc[i, "period_end_time"])
+            ],
+            categ_keywords,
         )
         round_categ_stats = get_categ_stats(round_categ_praise_score_df, categ_keywords)
         for key in mean_score_dict.keys():

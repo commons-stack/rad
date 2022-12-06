@@ -61,55 +61,76 @@ def load_sources_from_json(_fullPath):
     return (rewardsystem_objects, distribution_objects)
 
 
-# create method load_dicts_from_buffer(path, list[])
-
-
-def load_multiple_periods(_cross_period_root, config={}):
-    # config mode: file list or root_folder
-
-    # goes thorugh folders in _cross_period_root / file list
+def load_from_file_list(file_list):
 
     rwdObjs = {}
     rwdDists = {}
 
-    if config["mode"] == "file_list":
-        # file list: list of paths to specfic parameters.json files which we load and combine
-        for file in _cross_period_root:
-            # load data and append to array
-            (buf_obj, buf_dist) = load_sources_from_json(file)
+    for file in file_list:
+        # load data and append to array
+        (buf_obj, buf_dist) = load_sources_from_json(file)
 
-            for obj in buf_obj:
-                if buf_obj[obj].type not in rwdObjs:
-                    rwdObjs[buf_obj[obj].type] = [buf_obj[obj]]
-                else:
-                    rwdObjs[buf_obj[obj].type].append(buf_obj[obj])
-            for dist in buf_dist:
-                if buf_dist[dist].type not in rwdDists:
-                    rwdDists[buf_dist[dist].type] = [buf_dist[dist]]
-                else:
-                    rwdDists[buf_dist[dist].type].append(buf_dist[dist])
-    elif config["mode"] == "root_folder":
+        for obj in buf_obj:
+            if buf_obj[obj].type not in rwdObjs:
+                rwdObjs[buf_obj[obj].type] = [buf_obj[obj]]
+            else:
+                rwdObjs[buf_obj[obj].type].append(buf_obj[obj])
+        for dist in buf_dist:
+            if buf_dist[dist].type not in rwdDists:
+                rwdDists[buf_dist[dist].type] = [buf_dist[dist]]
+            else:
+                rwdDists[buf_dist[dist].type].append(buf_dist[dist])
 
-        datadir = _cross_period_root
+    return (rwdObjs, rwdDists)
+
+
+# create method load_dicts_from_buffer(path, list[])
+
+
+def load_multiple_periods(_fullPath):
+
+    # load the parameters for the cross_period:
+    input_path, input_name = os.path.split(_fullPath)
+
+    params = {}
+    with open(_fullPath, "r") as read_file:
+        params = json.load(read_file)
+
+    _cross_period_root = params["report_settings"]["cross_period_settings"]["data"]
+    _mode = params["report_settings"]["cross_period_settings"]["mode"]
+
+    # config mode: file list or root_folder
+
+    # goes through folders in _cross_period_root / file list
+
+    rwdObjs = {}
+    rwdDists = {}
+
+    if _mode == "file_list":
+        (rwdObjs, rwdDists) = load_from_file_list(_cross_period_root)
+
+    elif _mode == "root_folder":
+
+        # create the file list
+
+        # dirname = os.path.dirname(input_path)
+        datadir = os.path.join(input_path, _cross_period_root)
+
+        # datadir = _cross_period_root
         foldername_list = natsorted(os.listdir(datadir))
+        file_list = []
 
         for round_name in foldername_list:
             # load params.jon file and append to array
             if not os.path.isdir(f"{datadir}/{round_name}"):
-                foldername_list.remove(round_name)
+                # not a folder
+                continue
+            if not os.path.exists(f"{datadir}/{round_name}/parameters.json"):
+                # not a round folder
                 continue
             round_path = f"{datadir}/{round_name}/parameters.json"
-            (buf_obj, buf_dist) = load_sources_from_json(round_path)
+            file_list.append(round_path)
 
-            for obj in buf_obj:
-                if buf_obj[obj].type not in rwdObjs:
-                    rwdObjs[buf_obj[obj].type] = [buf_obj[obj]]
-                else:
-                    rwdObjs[buf_obj[obj].type].append(buf_obj[obj])
-            for dist in buf_dist:
-                if buf_dist[dist].type not in rwdDists:
-                    rwdDists[buf_dist[dist].type] = [buf_dist[dist]]
-                else:
-                    rwdDists[buf_dist[dist].type].append(buf_dist[dist])
+        (rwdObjs, rwdDists) = load_from_file_list(file_list)
 
     return (rwdObjs, rwdDists)

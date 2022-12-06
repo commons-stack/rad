@@ -42,3 +42,5 @@ def save_export(_name, _data, _config={}):
     filename = _name + export_extension
     with open(filename, "w") as f:
         f.write(export_file)
+
+    return [filename]

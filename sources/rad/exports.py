@@ -4,7 +4,7 @@
 # ====================
 #
 
-import json
+import json, os
 from . import importer
 import importlib
 from importlib.metadata import distribution
@@ -12,8 +12,9 @@ from importlib.metadata import distribution
 # from .rewardSystem import RewardSystem
 
 
-def process_all_exports(parameters_path):
+def process_all_exports(parameters_path, output_path):
     params = {}
+    all_filenames = []
     with open(parameters_path, "r") as read_file:
         params = json.load(read_file)
     if "exports" in params:
@@ -27,7 +28,15 @@ def process_all_exports(parameters_path):
             for source_system in params["exports"][export]["sources"]:
                 _data[source_system] = distribution_objects[source_system]
 
-            run_export(export, params["exports"][export], _data)
+            new_files = run_export(export, params["exports"][export], _data)
+            # [all_filenames.append(item) for item in new_files]
+            all_filenames += new_files
+
+    # move all the generated files to the right folder
+    for filename in all_filenames:
+        # print(filename)
+        file_destination = output_path + filename
+        os.rename(filename, file_destination)
 
 
 def run_export(_name, _config, _data):
@@ -45,13 +54,13 @@ def run_export(_name, _config, _data):
     """
 
     if len(_config["sources"]) == 1:
-        rewardObj = _data[_config["sources"][0]]
-        run_single_export(_name, _config, rewardObj)
+        distObj = _data[_config["sources"][0]]
+        return run_single_export(_name, _config, distObj)
     else:
-        run_combined_export(_name, _config, _data)
+        return run_combined_export(_name, _config, _data)
 
 
-def run_single_export(_name, _config, _rewardObj):
+def run_single_export(_name, _config, _distObj):
     """
     Runs a specified export scirpt for a specific dataset
 
@@ -62,20 +71,13 @@ def run_single_export(_name, _config, _rewardObj):
         Raises:
             [TODO] Implement errors and list them here.
         Returns:
-            nothing, just saves the files
+            the names of the saved files
     """
 
-    PATH_TO_MODULE = "rad." + _rewardObj.type + ".export." + _config["type"]
+    PATH_TO_MODULE = "rad." + _distObj.type + ".export." + _config["type"]
     mod = importlib.import_module(PATH_TO_MODULE)
 
-    export_file, export_extension = mod.run_export(_rewardObj, _config)
-
-    # filename = "export_" + _name + "_" + _config["type"] + ".csv"
-    filename = _name + export_extension
-    with open(filename, "w") as f:
-        f.write(export_file)
-
-    return
+    return mod.save_export(_name, _distObj, _config)
 
 
 def run_combined_export(_name, _config, _data):
@@ -93,4 +95,4 @@ def run_combined_export(_name, _config, _data):
     """
     # [TODO] Implement this
     print(f"{_name}: Multi-system export not yet implemented. Pass")
-    pass
+    return []

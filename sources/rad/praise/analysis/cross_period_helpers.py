@@ -29,7 +29,7 @@ def combine_quantification_data(distObjs, config={}):
 
     allrounds_df = []
 
-    print(type(distObjs))
+    # print(type(distObjs))
 
     for i, dist in enumerate(distObjs):
 
