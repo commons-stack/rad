@@ -1,9 +1,6 @@
-# from . import *
 from .praise import Praise
 from .straight_distribution import *
 
-# from .straight_distribution import StraightDistribution
-# from .sourcecred import Sourcecred
 
 import pandas as pd
 

@@ -1,5 +1,3 @@
-# from . import *
-
 from .straight_distribution.distribution.straightDistribution import (
     StraightDistribution,
 )
@@ -7,8 +5,7 @@ from .straight_distribution.distribution.straightDistribution import (
 from .praise.distribution.standard_praise import PraiseDistribution
 
 
-# from .straight_distribution import StraightDistribution
-# from .sourcecred import Sourcecred
+
 
 import pandas as pd
 
@@ -30,12 +27,10 @@ def build_distribution_object(_name, _type, _params, _sources):
 
     """
     if _type == "standard_praise":
-        # return create_praise_distribution(_params)
         return create_praise_distribution(_name, _params, _sources)
     if _type == "straight":
         return create_straight_distribution(_name, _params, _sources)
     if _type == "sourcecred":
-        # return create_sourcecred_object(_params)
         print("sourcecred not implemented")
         pass
 

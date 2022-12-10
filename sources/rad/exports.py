@@ -1,15 +1,7 @@
-#
-# ====================
-#  BIG REVIEW PENDING
-# ====================
-#
-
 import json, os
 from . import importer
 import importlib
 from importlib.metadata import distribution
-
-# from .rewardSystem import RewardSystem
 
 
 def process_all_exports(parameters_path, output_path):
