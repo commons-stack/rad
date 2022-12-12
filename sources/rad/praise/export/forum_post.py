@@ -46,12 +46,12 @@ def generate_post(_data):
     start_date = pd.to_datetime(dataTable["DATE"].min()).date()
 
     end_date = pd.to_datetime(dataTable["DATE"].max()).date()
-    total_tokens = _data.distAmount
+    total_tokens = _data.totalDistributedTokens
     praise_pct = _data.userRewardPct
     sourcecred_pct = _data.quantifierRewardPct
 
-    rewards_amt = _data.distAmount * _data.userRewardPct / 100
-    quant_amt = _data.distAmount * _data.quantifierRewardPct / 100
+    rewards_amt = _data.totalDistributedTokens * _data.userRewardPct / 100
+    quant_amt = _data.totalDistributedTokens * _data.quantifierRewardPct / 100
 
     token_table = pd.DataFrame(_data.distributionResults)
     token_table = token_table[["USER IDENTITY", "TOTAL TO RECEIVE"]].copy()

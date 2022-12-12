@@ -25,7 +25,7 @@
     "tec_praise_dist": {
       "type": "standard_praise",
       "sources": ["tec_praise", "rewardboard"],
-      "distribution_amount": 1876,
+      "max_distribution_amount": 1876,
       "ceiling_cutoff": 1,
       "user_dist_pct": 90,
       "quantifiers_dist_pct": 7,

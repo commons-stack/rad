@@ -26,7 +26,7 @@ def run(praise_distribution_data, _config={}):
     praise_distribution = praise_distribution_data
     res = praise_distribution.distributionResults
 
-    TOTAL_TOKENS_ALLOCATED = praise_distribution.distAmount
+    TOTAL_TOKENS_ALLOCATED = praise_distribution.totalDistributedTokens
     DUPLICATE_PRAISE_WEIGHT = (
         praise_distribution.praiseInstance.duplicatePraiseValuation
     )

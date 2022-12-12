@@ -13,7 +13,6 @@
 # Current TO DOs:
 
 - [ ] [Epic] Go through all functions and implement error checking/ raising
-- [ ] [minor] check if there is a more elegant way to code the notebookbuilder.append_cell_set function. There probably is, but extend() doesn't seem to work.
 - [ ] In the Aragon export, allow to send a link in the config dict that substitutes IDs for addresses. Should come in handy for adding sourcecred
 - [ ] "praise flow" refactor
 - [ ] Something in the praise flow makes a warning pop up when converting. figure out what it is
@@ -21,10 +20,10 @@
 - [ ] allow to user to create their own folder with reports/dstributions/exports and call them from inside RAD
 - [ ] general renaming/cleanup
 - [x] Cross-period: Fix breaking bug in last cell
-- [ ] Make export for category analysis (look at TODO in analysis module)
+- [x] Make export for category analysis (look at TODO in analysis module)
 - [x] Look into "root-folder" parameter bug
 - [ ] Decide how to implement Nakamoto score/ratio
 - [ ] Compare results with original to make sure everything works
 - [ ] Refactor cross period modules and function calls
 - [ ] Make sure the forum post reflects the final distributed tokens, not the maximum
-- [ ] Allow to specify the name of the parameters file (to easily adapt tec-rewards)
+- [x] Allow to specify the name of the parameters file (to easily adapt tec-rewards)

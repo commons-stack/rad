@@ -1,6 +1,6 @@
 # TEC Rewards Distribution - tec_praise_dist  - 30/05/22 to 18/06/22 
 This period covers praise given between **30 May 2022 and 18 June 2022**. 
-We allocated **2814** TEC tokens for rewards, with a **90:7** split between Praisees and quantifiers. Some praise accounts still haven’t been activated so the total amount below will be less than what we set aside to distribute. Out of the total rewards:   
+We allocated **2814.0** TEC tokens for rewards, with a **90:7** split between Praisees and quantifiers. Some praise accounts still haven’t been activated so the total amount below will be less than what we set aside to distribute. Out of the total rewards:   
 * 2532.6 tokens were given as praise rewards :pray:  
 * 196.98 distributed among quantifiers :balance_scale: 
     

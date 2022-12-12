@@ -42,14 +42,12 @@ def run(allrounds_df, categ_keywords, _config={}):
     return categ_praise_scores_df
 
 
-def printDescription(praise_distribution_data, categ_keywords, _config={}):
+def printDescription(praise_distribution_data, categ_keywords, _config={"mode":"summary-table", "num":0}):
     categ_praise_df = run(praise_distribution_data, categ_keywords, _config={})
-    if _config == {}:
-        _mode = "summary-table"
-        _num = 0
-    else:
-        _mode = _config["mode"]
-        _num = _config["num"]
+    
+    _mode = _config["mode"]
+    _num = _config["num"]
+    
     # mode: basic table (get_categ_stats?)
     if _mode == "summary-table":
         summary_df = get_categ_stats(categ_praise_df, categ_keywords)
@@ -85,13 +83,10 @@ def printDescription(praise_distribution_data, categ_keywords, _config={}):
         display(Markdown(mdtext))
 
 
-def printGraph(praise_distribution_data, categ_keywords, _config={}):
+def printGraph(praise_distribution_data, categ_keywords, _config={"mode":"avg-stats"}):
     categ_praise_df = run(praise_distribution_data, categ_keywords, _config={})
-
-    if _config == {}:
-        _mode = "avg-stats"
-    else:
-        _mode = _config["mode"]
+    
+    _mode = _config["mode"]
 
     # mode avg score box
     if _mode == "avg-stats":

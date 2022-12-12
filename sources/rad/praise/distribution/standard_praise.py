@@ -22,7 +22,7 @@ class PraiseDistribution(RewardDistribution):
         _name,
         _praiseInstance,
         _rewardboardInstance,
-        _distAmount,
+        _maxDistAmount,
         _ceilingCutoff,
         _userRewardPct,
         _quantifierRewardPct,
@@ -36,7 +36,7 @@ class PraiseDistribution(RewardDistribution):
 
         Args:
             _benficiaries: list of the users participating in the reward system
-            _distAmount: number, the amount of tokens to be distributed
+            _maxDistAmount: number, the amount of tokens to be distributed
             _tokenName: string indicating the name of the token the rewards will be paid out in
             _tokenAddress: the address of the reward token
             _distributionResults: Optional. Dictionary containing the results of a distribution.
@@ -53,8 +53,15 @@ class PraiseDistribution(RewardDistribution):
         self.userRewardPct = _userRewardPct
         self.quantifierRewardPct = _quantifierRewardPct
         self.rewardboardRewardPct = _rewardboardRewardPct
-        self.distAmount = int(_distAmount)
+        self.maxDistAmount = int(_maxDistAmount)
         self.ceilingCutoff = int(_ceilingCutoff)
+        self.totalDistributedTokens =  float(_maxDistAmount)
+        if len(self.praiseInstance.dataTable) < self.ceilingCutoff:
+            self.totalDistributedTokens = (
+                len(self.praiseInstance.dataTable)
+                / self.ceilingCutoff
+                * self.totalDistributedTokens
+            )
         self.tokenName = _tokenName
         self.tokenAddress = _tokenAddress
         self.distributionResults = _distributionResults
@@ -74,8 +81,8 @@ class PraiseDistribution(RewardDistribution):
 
         """
         return (
-            "From str method of Praise: distAmount is % s, tokenName is % s, results are % s"
-            % (self.distAmount, self.tokenName, str(self.distributionResults))
+            "From str method of Praise: totalDistributedTokens is % s, tokenName is % s, results are % s"
+            % (self.totalDistributedTokens, self.tokenName, str(self.distributionResults))
         )
 
     @classmethod
@@ -102,12 +109,11 @@ class PraiseDistribution(RewardDistribution):
             if _sources[obj].type == "straight_distribution" and rewardObj == {}:
                 rewardObj = _sources[obj]
 
-        distAmount = _params["distribution_amount"]
+        maxDistAmount = _params["max_distribution_amount"]
         ceilingCutoff = _params["ceiling_cutoff"]
         userRewardPct = _params["user_dist_pct"]
         quantifierRewardPct = _params["quantifiers_dist_pct"]
         rewardboardRewardPct = _params["reward_dist_pct"]
-
         tokenName = _params["payout_token"]["token_name"]
         tokenAddress = _params["payout_token"]["token_address"]
 
@@ -115,7 +121,7 @@ class PraiseDistribution(RewardDistribution):
             _name=_objectName,
             _praiseInstance=praiseObj,
             _rewardboardInstance=rewardObj,
-            _distAmount=distAmount,
+            _maxDistAmount=maxDistAmount,
             _ceilingCutoff=ceilingCutoff,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
@@ -148,8 +154,9 @@ class PraiseDistribution(RewardDistribution):
         userRewardPct = _dict["userRewardPct"]
         quantifierRewardPct = _dict["quantifierRewardPct"]
         rewardboardRewardPct = _dict["rewardboardRewardPct"]
-        distAmount = _dict["distAmount"]
+        maxDistAmount = _dict["maxDistAmount"]
         ceilingCutoff = _dict["ceilingCutoff"]
+        totalDistributedTokens = dict["totalDistributedTokens"] 
         tokenName = _dict["tokenName"]
         tokenAddress = _dict["tokenAddress"]
         distributionResults = _dict["distributionResults"]
@@ -158,8 +165,9 @@ class PraiseDistribution(RewardDistribution):
             _name=name,
             _praiseInstance=praiseObj,
             _rewardboardInstance=rewardboardObj,
-            _distAmount=distAmount,
+            _maxDistAmount=maxDistAmount,
             _ceilingCutoff=ceilingCutoff,
+            _totalDistributedTokens=totalDistributedTokens,
             _userRewardPct=userRewardPct,
             _quantifierRewardPct=quantifierRewardPct,
             _rewardboardRewardPct=rewardboardRewardPct,
@@ -183,7 +191,8 @@ class PraiseDistribution(RewardDistribution):
         exp_dict["userRewardPct"] = self.userRewardPct
         exp_dict["quantifierRewardPct"] = self.quantifierRewardPct
         exp_dict["rewardboardRewardPct"] = self.rewardboardRewardPct
-        exp_dict["distAmount"] = self.distAmount
+        exp_dict["maxDistAmount"] = self.maxDistAmount
+        exp_dict["totalDistributedTokens"] = self.totalDistributedTokens
         exp_dict["tokenName"] = self.tokenName
         exp_dict["tokenAddress"] = self.tokenAddress
         exp_dict["distributionResults"] = self.distributionResults
@@ -212,7 +221,7 @@ class PraiseDistribution(RewardDistribution):
         # calculate praise rewards and update the datatable
 
         # if the amount of praise is below the cutoff, adapt number of distributed tokens
-        total_tokens_allocated = self.distAmount
+        total_tokens_allocated = self.maxDistAmount
         if len(self.praiseInstance.dataTable) < self.ceilingCutoff:
             total_tokens_allocated = (
                 len(self.praiseInstance.dataTable)
@@ -220,8 +229,8 @@ class PraiseDistribution(RewardDistribution):
                 * float(total_tokens_allocated)
             )
 
-        praiseTokenAmount = total_tokens_allocated * self.userRewardPct / 100
-        quantTokenAmount = total_tokens_allocated * self.quantifierRewardPct / 100
+        praiseTokenAmount = self.totalDistributedTokens * self.userRewardPct / 100
+        quantTokenAmount = self.totalDistributedTokens * self.quantifierRewardPct / 100
 
         praise_by_user = self.praiseInstance.get_praise_by_user()
 
@@ -243,28 +252,7 @@ class PraiseDistribution(RewardDistribution):
 
         self.distributionResults = pd.DataFrame.to_dict(final_token_allocations)
 
-        # exports we want to build:
-        # extended praise
-        # final praise alloc
-        # aragon_dist
 
-        # print(quant_rewards)
-
-        # save to file for testing purposes
-        # filename = "TEST_PRAISE_EXPORT.csv"
-        # final_allocation_csv = final_token_allocations.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
-
-        # filename = "TEST_QUANT_EXPORT.csv"
-        # final_allocation_csv = quant_rewards.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
-
-        # filename = "TEST_EXTENDED_EXPORT.csv"
-        # final_allocation_csv = praise_distribution.to_csv(sep=",", index=False)
-        # with open(filename, "w") as f:
-        #     f.write(final_allocation_csv)
 
     def calc_quantifier_rewards(self, quantifierData, tokensToDistribute):
         quantifier_sum = (

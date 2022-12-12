@@ -25,13 +25,10 @@ def printDescription(allrounds_df, _config={}):
     pass
 
 
-def printGraph(allrounds_df, _config={}):
+def printGraph(allrounds_df, _config={"y":"pearson_coef"}):
     quant_stats = run(allrounds_df, _config)
 
-    if _config == {}:
-        _y = "pearson_coef"
-    else:
-        _y = _config["y"]
+    _y = _config["y"]
 
     if _y == "pearson_coef":
         fig = px.scatter(

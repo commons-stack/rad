@@ -23,10 +23,10 @@ from rad import exports
 import papermill as pm
 
 
-def run_rad(_inputPath):
+def run_rad(_inputPath, _inputFilename):
 
     ROOT_INPUT_PATH = _inputPath
-    PARAMETERS_PATH = ROOT_INPUT_PATH + "parameters.json"
+    PARAMETERS_PATH = ROOT_INPUT_PATH + _inputFilename
 
     ROOT_OUTPUT_PATH = ROOT_INPUT_PATH + "analysis_results/"
 
@@ -47,7 +47,7 @@ def run_rad(_inputPath):
         # "distribution_objects": dstObjs_dicts,
     }
 
-    ANALYSIS_NOTEBOOK_FOLDER = "./my_reports/"
+    ANALYSIS_NOTEBOOK_FOLDER = "./local/"
 
     if not os.path.isdir(ANALYSIS_NOTEBOOK_FOLDER):
         print(f"No analysis notebook path not provided, skip analysis.")
@@ -106,11 +106,23 @@ if __name__ == "__main__":
         required=True,
         help="Path to the folder in which we'll perform the analysis",
     )
+    parser.add_argument(
+        "-f",
+        "--file",
+        type=str,
+        required=False,
+        help="Name of the file to load the parameters from.",
+    )
     args = parser.parse_args()
 
     input_path = args.path
     # quick conveniency check
     input_path = input_path if input_path[-1] == "/" else (input_path + "/")
+    
+    input_filename = "parameters.json" 
+    if(args.file):
+        input_filename =args.file
 
-    run_rad(input_path)
+
+    run_rad(input_path, input_filename)
 
