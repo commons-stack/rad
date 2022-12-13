@@ -2,8 +2,6 @@
 __pycache__/
 .pyc
 
-
-local/
 test_data/
 
 # Byte-compiled / optimized / DLL files
