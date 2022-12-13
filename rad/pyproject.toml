@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0","bokeh","holoviews","ipython","natsort","nltk","numpy","pandas","plotly"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "gm-rad"
+version = "0.0.1"
+authors = [
+  { name="Nuggan"},
+]
+description = "Aids in analyzing the results of DAO reward distribution systems"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/givepraise/rad"
+"Bug Tracker" = "https://github.com/givepraise/rad/issues"

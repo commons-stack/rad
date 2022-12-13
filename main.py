@@ -78,7 +78,7 @@ def run_rad(_inputPath, _inputFilename):
 
             # generate HTML report
             return_buf = subprocess.run(
-                "jupyter nbconvert --log-level=0 --to html --TemplateExporter.exclude_input=True %s"
+                "jupyter nbconvert --log-level=CRITICAL --to html --TemplateExporter.exclude_input=True %s"
                 % nb_destination_path,
                 shell=True,
             )
