@@ -14,6 +14,7 @@
 
 import argparse
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from natsort import natsorted
@@ -74,7 +75,7 @@ def run_rad(_inputPath, _inputFilename):
                 if not (output_csv.endswith(".csv")):
                     continue
                 csv_destination = EXPORTS_OUTPUT_PATH + output_csv
-                os.rename(output_csv, csv_destination)
+                shutil.move(output_csv, csv_destination)
 
             # generate HTML report
             return_buf = subprocess.run(
@@ -88,8 +89,7 @@ def run_rad(_inputPath, _inputFilename):
             html_report_destination = (
                 REPORT_OUTPUT_PATH + notebook[0:-6] + "-report.html"
             )
-            os.rename(html_report_origin, html_report_destination)
-
+            shutil.move(html_report_origin, html_report_destination)
 
     exports.process_all_exports(PARAMETERS_PATH, EXPORTS_OUTPUT_PATH)
 
@@ -118,11 +118,9 @@ if __name__ == "__main__":
     input_path = args.path
     # quick conveniency check
     input_path = input_path if input_path[-1] == "/" else (input_path + "/")
-    
-    input_filename = "parameters.json" 
-    if(args.file):
-        input_filename =args.file
 
+    input_filename = "parameters.json"
+    if (args.file):
+        input_filename = args.file
 
     run_rad(input_path, input_filename)
-

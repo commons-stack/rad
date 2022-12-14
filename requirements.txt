@@ -12,3 +12,4 @@ tabulate
 notebook
 jupyter-contrib-nbextensions
 black
+shutils

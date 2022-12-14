@@ -1,4 +1,6 @@
-import json, os
+import json
+import os
+import shutil
 from . import importer
 import importlib
 from importlib.metadata import distribution
@@ -28,7 +30,7 @@ def process_all_exports(parameters_path, output_path):
     for filename in all_filenames:
         # print(filename)
         file_destination = output_path + filename
-        os.rename(filename, file_destination)
+        shutil.move(filename, file_destination)
 
 
 def run_export(_name, _config, _data):
