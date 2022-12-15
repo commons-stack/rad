@@ -27,6 +27,7 @@ def run(praise_distribution_data, _config={}):
     res = praise_distribution.distributionResults
 
     TOTAL_TOKENS_ALLOCATED = praise_distribution.totalDistributedTokens
+    TOKEN_NAME = praise_distribution.tokenName
     DUPLICATE_PRAISE_WEIGHT = (
         praise_distribution.praiseInstance.duplicatePraiseValuation
     )
@@ -41,7 +42,7 @@ def run(praise_distribution_data, _config={}):
     pseudonym_string = "were" if bool(PSEUDONYMS_USED) else "were not"
 
     res = f"<ul><li>This period covers praise given between <b>{PERIOD_START_DATE}</b> and  <b>{PERIOD_END_DATE}</b>. </li> \
-<li> We allocated a total of <b>{TOTAL_TOKENS_ALLOCATED}</b> TEC tokens for rewards. </li>\
+<li> We allocated a total of <b>{TOTAL_TOKENS_ALLOCATED}</b> {TOKEN_NAME} tokens for rewards. </li>\
 <li>Duplicate praise received a weighting of <b>{DUPLICATE_PRAISE_WEIGHT}</b> the value of the original praise. </li> \
 <li>We assigned <b>{NUMBER_OF_QUANTIFIERS_PER_PRAISE}</b> quantifiers per praise instance. </li> \
 <li>Praise receiver names <b>{pseudonym_string}</b> hidden behind pseudonyms during quantification </li> \
