@@ -21,7 +21,7 @@ def run(allrounds_df, _config={}):
         if i == (len(dates) - 1):
             continue
 
-        round_row = pd.Series()
+        round_row = pd.Series(dtype = 'object')
         # basic information
         round_row["period_name"] = "period-" + str(i + 1)
         round_row["period_start_time"] = dates[i]

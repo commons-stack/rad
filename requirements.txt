@@ -13,3 +13,5 @@ notebook
 jupyter-contrib-nbextensions
 black
 shutils
+pyparsing
+ipysankeywidget

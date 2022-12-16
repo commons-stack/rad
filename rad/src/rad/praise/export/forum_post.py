@@ -47,6 +47,7 @@ def generate_post(_data):
 
     end_date = pd.to_datetime(dataTable["DATE"].max()).date()
     total_tokens = _data.totalDistributedTokens
+    token_name = _data.tokenName
     praise_pct = _data.userRewardPct
     sourcecred_pct = _data.quantifierRewardPct
 
@@ -56,17 +57,17 @@ def generate_post(_data):
     token_table = pd.DataFrame(_data.distributionResults)
     token_table = token_table[["USER IDENTITY", "TOTAL TO RECEIVE"]].copy()
     token_table.rename(
-        columns={"USER IDENTITY": "Username", "TOTAL TO RECEIVE": "Rewards in TEC"},
+        columns={"USER IDENTITY": "Username", "TOTAL TO RECEIVE": f"Rewards in {token_name}"},
         inplace=True,
     )
     markdown_table = token_table.to_markdown(index=False)
-    output = f"""# TEC Rewards Distribution - {_data.name}  - {start_date.strftime("%d/%m/%y")} to {end_date.strftime("%d/%m/%y")} 
+    output = f"""# {token_name} Rewards Distribution - {_data.name}  - {start_date.strftime("%d/%m/%y")} to {end_date.strftime("%d/%m/%y")} 
 This period covers praise given between **{start_date.strftime("%d %B %Y")} and {end_date.strftime("%d %B %Y")}**. 
-We allocated **{total_tokens}** TEC tokens for rewards, with a **{praise_pct}:{sourcecred_pct}** split between Praisees and quantifiers. Some praise accounts still haven’t been activated so the total amount below will be less than what we set aside to distribute. Out of the total rewards:   
+We allocated **{total_tokens}** {token_name} tokens for rewards, with a **{praise_pct}:{sourcecred_pct}** split between Praisees and quantifiers. Some praise accounts still haven’t been activated so the total amount below will be less than what we set aside to distribute. Out of the total rewards:   
 * {rewards_amt} tokens were given as praise rewards :pray:  
 * {quant_amt} distributed among quantifiers :balance_scale: 
     
-This data has been reviewed by the Quantifiers and the Reward Board, and has been submitted for distribution to the [Reward Board DAO](https://xdai.aragon.blossom.software/#/rewardboardtec/)    
+This data has been reviewed by the Quantifiers and the Reward Board, and has been submitted for distribution to the [Reward Board DAO](ADD LINK HERE)    
 You can check out the [full period analysis here](ADD LINK HERE). :bar_chart:    
 This post will be open to the community for review for 48 hours then submitted to the Reward Board for final execution. :heavy_check_mark:   
 The Rewards Distribution for this round is as follows:
