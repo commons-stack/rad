@@ -20,6 +20,7 @@ Usually the output consists of three folders:
 
 - Create a python virtual environment
 - Run "pip install -r requirements.txt"
+- Run "pip install -e rad/"
 - Run "python main.py -p path_to_data/"
 
 # Run using Docker
