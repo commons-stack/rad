@@ -1,13 +1,17 @@
 from ..distribution.standard_praise import PraiseDistribution
 import plotly.express as px
+import plotly.io as pio
 import pandas as pd
+pio.renderers.default = "plotly_mimetype+notebook"
 
 
 from bokeh.plotting import figure, show
 import holoviews as hv
-from holoviews import opts
+from holoviews import opts, dim
 from IPython.display import Markdown, display
 import json
+
+import plotly.express as px
 
 
 # header = "# Histogram"
@@ -55,7 +59,7 @@ def run(praise_distribution_data, _config={"num-senders":15, "num-receivers":25}
     # Right side. Praise receivers. Y larget one + rest (others) (-1 because of zero-counting)
     n2 = n_receivers - 1
 
-    df_from = reference_df.groupby(["FROM"]).sum().copy()
+    df_from = reference_df.groupby(["FROM"]).sum(numeric_only=True).copy()
     df_from.reset_index(inplace=True, drop=False)
     min_from = df_from["AVG SCORE"].sort_values(ascending=False).unique()[n1]
     df_from2 = df_from.copy()
@@ -159,4 +163,7 @@ def printGraph(praise_distribution_data, _config={"num-senders":15, "num-receive
 
     # hv.Sankey(distribution, kdims=["FROM", "TO"], vdims=["AVG SCORE"])
 
-    return flow
+    flow.display()
+
+    return 
+    

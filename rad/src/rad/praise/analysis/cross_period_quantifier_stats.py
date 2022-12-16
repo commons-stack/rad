@@ -174,7 +174,7 @@ def data_by_quantifier(praise_data):
             inplace=True,
         )
 
-        quant_only = quant_only.append(buf.copy(), ignore_index=True)
+        quant_only = pd.concat([quant_only, buf.copy()])
 
     columnsTitles = ["QUANT_ID", "PRAISE_ID", "QUANT_VALUE"]
     quant_only.sort_values(["QUANT_ID", "PRAISE_ID"], inplace=True)
