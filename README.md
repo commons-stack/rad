@@ -1,29 +1,29 @@
+# Rewards Analysis and Distribution (RAD) Module
+
+The RAD Module empowers user to easily analyze the reward distributions of their DAO, and generate automated reports which can be shared with the community.
+
+# General Structure
+
+RAD consists of two main parts:
+
+- **RAD module package** : A python package implementing objects for supporte reward systems, which can be used to process and analyze them.
+- **Reports** : Jupyter notebooks wich focus on specific parts of the data, and can be re-run or converted to html for easy distribution.
+
+The main rad script takes a folder contiaing distribution data as input. It will look for a file called parameters.json in it, and run all reports in the `/local` folder with that file as input. Results are stored in a folder called `analysis-results` in the same place the data was taken from.
+
+Usually the output consists of three folders:
+-Reports: HTML version of the reports for easy sharing
+-Executed_notebooks: A copy of jupyter notebooks in executed state for easy audit
+-Exports: Other files saved as specified inside parameters.json
+
 # Run using local Python installation
 
 - Create a python virtual environment
 - Run "pip install -r requirements.txt"
-- Run "python main.py -p test_data/"
+- Run "python main.py -p path_to_data/"
 
 # Run using Docker
 
 - Prerequisite: Docker
 - `bash start.sh [absoute path to root data folder]`
 - In RAD cli: `bash rad.sh data_folder`
-
-# Current TO DOs:
-
-- [ ] [Epic] Go through all functions and implement error checking/ raising
-- [ ] In the Aragon export, allow to send a link in the config dict that substitutes IDs for addresses. Should come in handy for adding sourcecred
-- [ ] "praise flow" refactor
-- [ ] Something in the praise flow makes a warning pop up when converting. figure out what it is
-- [ ] rating_distribution.py: removing no-raters got lost somewhere. Redo
-- [ ] allow to user to create their own folder with reports/dstributions/exports and call them from inside RAD
-- [ ] general renaming/cleanup
-- [x] Cross-period: Fix breaking bug in last cell
-- [x] Make export for category analysis (look at TODO in analysis module)
-- [x] Look into "root-folder" parameter bug
-- [ ] Decide how to implement Nakamoto score/ratio
-- [ ] Compare results with original to make sure everything works
-- [ ] Refactor cross period modules and function calls
-- [ ] Make sure the forum post reflects the final distributed tokens, not the maximum
-- [x] Allow to specify the name of the parameters file (to easily adapt tec-rewards)
