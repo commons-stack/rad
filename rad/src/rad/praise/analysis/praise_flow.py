@@ -142,7 +142,7 @@ def printGraph(praise_distribution_data, _config={"num-senders":15, "num-receive
     flow.opts(
         cmap="Category10",
         edge_color="FROM",
-        edge_line_width=0,
+        #edge_line_width=0,
         node_alpha=1.0,
         label_position="outer",
         bgcolor="snow",
@@ -163,7 +163,5 @@ def printGraph(praise_distribution_data, _config={"num-senders":15, "num-receive
 
     # hv.Sankey(distribution, kdims=["FROM", "TO"], vdims=["AVG SCORE"])
 
-    flow.display()
-
-    return 
+    return flow
     

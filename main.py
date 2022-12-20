@@ -24,12 +24,12 @@ from rad import exports
 import papermill as pm
 
 
-def run_rad(_inputPath, _inputFilename):
+def run_rad(_inputPath, _inputFilename, _outputPath):
 
     ROOT_INPUT_PATH = _inputPath
     PARAMETERS_PATH = ROOT_INPUT_PATH + _inputFilename
 
-    ROOT_OUTPUT_PATH = ROOT_INPUT_PATH + "analysis_results/"
+    ROOT_OUTPUT_PATH = _outputPath + "analysis_results/"
 
     NOTEBOOK_OUTPUT_PATH = ROOT_OUTPUT_PATH + "executed_notebooks/"
     REPORT_OUTPUT_PATH = ROOT_OUTPUT_PATH + "reports/"
@@ -113,6 +113,13 @@ if __name__ == "__main__":
         required=False,
         help="Name of the file to load the parameters from.",
     )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        required=False,
+        help="Path to the folder where we will save the results.",
+    )
     args = parser.parse_args()
 
     input_path = args.path
@@ -123,4 +130,10 @@ if __name__ == "__main__":
     if (args.file):
         input_filename = args.file
 
-    run_rad(input_path, input_filename)
+    output_path = args.path
+    if(args.output):
+        output_path = args.output
+        # quick conveniency check
+        output_path = output_path if output_path[-1] == "/" else (output_path + "/")
+
+    run_rad(input_path, input_filename, output_path)
