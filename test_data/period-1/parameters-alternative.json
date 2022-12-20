@@ -1,0 +1,106 @@
+{
+  "distribution_name": "round-test",
+  "results_output_folder": "distribution_results",
+  "sources": {
+    "tec_praise": {
+      "type": "praise",
+      "quantifiers_per_praise": 4,
+      "praise_quantify_allowed_values": [
+        0, 1, 3, 5, 8, 13, 21, 34, 55, 89, 144
+      ],
+      "pseudonyms_used": false,
+      "duplicate_praise_valuation": 0.1,
+      "input_files": {
+        "praise_data": "praise.csv"
+      }
+    },
+    "rewardboard": {
+      "type": "straight_distribution",
+      "input_files": {
+        "beneficiary_list": "rewardboard.csv"
+      }
+    },
+    "quantifiers": {
+      "type": "straight_distribution",
+      "input_files": {
+        "beneficiary_list": "quantifiers.csv"
+      }
+    }
+  },
+  "distributions": {
+    "tec_praise_dist": {
+      "type": "standard_praise",
+      "sources": ["tec_praise", "rewardboard"],
+      "max_distribution_amount": 2814,
+      "ceiling_cutoff": 1,
+      "user_dist_pct": 90,
+      "quantifiers_dist_pct": 7,
+      "reward_dist_pct": 3,
+      "payout_token": {
+        "token_name": "TEC",
+        "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
+      }
+    },
+    "quantifiers_dist": {
+      "type": "straight",
+      "sources": ["quantifiers"],
+      "distribution_amount": "500",
+      "payout_token": {
+        "token_name": "TEC",
+        "token_address": "0x5dF8339c5E282ee48c0c7cE8A7d01a73D38B3B27"
+      }
+    }
+  },
+  "report_settings": {
+    "cross_period_settings": {
+      "data": [
+        "./test_data/cross_period_exp/round-11/parameters.json",
+        "./test_data/cross_period_exp/round-12/parameters.json",
+        "./test_data/cross_period_exp/round-13/parameters.json",
+        "./test_data/cross_period_exp/round-14/parameters.json"
+      ],
+      "mode": "file_list"
+    }
+  },
+  "exports": {
+    "rewardboard_aragon": {
+      "type": "aragon_distribution",
+      "sources": ["tec_praise_dist"]
+    },
+    "quantifier_aragon": {
+      "type": "aragon_distribution",
+      "sources": ["quantifiers_dist"]
+    },
+    "combined_aragon": {
+      "type": "aragon_distribution",
+      "sources": ["tec_praise_dist", "quantifiers_dist"]
+    },
+    "praise_results": {
+      "type": "basic_distribution_results",
+      "sources": ["tec_praise_dist"]
+    },
+    "extended_praise_table": {
+      "type": "extended_praise_data",
+      "sources": ["tec_praise_dist"]
+    },
+    "praise_forum_post": {
+      "type": "forum_post",
+      "sources": ["tec_praise_dist"]
+    },
+    "praise_categories": {
+      "type": "categorized_praise",
+      "sources": ["tec_praise_dist"],
+      "categ_keywords": {
+        "attendance": "join|attend|show up|participat",
+        "discussion": "question|ask|discuss|discussion",
+        "work": "help|work|design|make|write|hack|edit",
+        "lead": "host|lead|initiate|form|organize|steward",
+        "share": "share|spread",
+        "twitter": "twitter|tweet",
+        "hack": "hack|test",
+        "general": "support|awesome",
+        "IRL": "trip|conference"
+      }
+    }
+  }
+}
